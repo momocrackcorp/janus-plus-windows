@@ -2,7 +2,7 @@
 
 Aplicación gráfica para trasladar Escritorio, Documentos, Descargas, Imágenes, Música y Vídeos a otra unidad sin arriesgar los archivos originales.
 
-**Versión actual: JANUS+ 4.0 Beta.** Esta edición amplía el proyecto original con navegación integrada, Mochila de reinstalación, herramientas de puesta a punto y una sección de temas reversibles. Los temas visuales y complementos de iconos continúan distribuyéndose por separado y no aumentan el tamaño del ejecutable principal.
+**Versión actual: JANUS+ 4.00 B (Beta de test), elaborada el 22 de agosto de 2026.** Esta edición contiene todas las funciones de JANUS 3.1.x y suma una sección de temas reversibles con su propio selector. Los temas visuales y complementos de iconos continúan distribuyéndose por separado y no aumentan el tamaño del ejecutable principal.
 
 ## Finalidad de JANUS
 

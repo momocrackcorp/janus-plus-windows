@@ -11,7 +11,8 @@ class JanusPlusPackagingTests(unittest.TestCase):
     def test_beta_package_has_stable_release_identity(self):
         self.assertIn('Version = "4.0.0-beta"', SCRIPT)
         self.assertIn('"JANUS-Plus-$Version"', SCRIPT)
-        self.assertIn("JANUS+ 4.0 Beta", NOTES)
+        self.assertIn("JANUS+ 4.00 B", NOTES)
+        self.assertIn("22 de agosto de 2026", NOTES)
 
     def test_package_contains_binary_docs_notes_and_hash(self):
         self.assertIn("build-native.ps1", SCRIPT)

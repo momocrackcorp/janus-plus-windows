@@ -110,13 +110,13 @@ namespace MigradorSeguro {
       new WindowsThemeOption{Id="retro",Name="JANUS Retro",PackageFile="JANUS-Retro-v1.zip",FileToken="Retro",Prefix="retro",ManifestId="janus-retro",PreviewResourcePrefix="Retro",UltrawideSuffix="-Ultrawide-5K.jpg",WallpaperExtension=".jpg",Variants=new[]{"Pradera","Puma","Mosaico98"},Wallpapers=new[]{"Pradera","Nubes","Bosque","Puma","Mosaico98"},ForceLight=true,Slideshow=true,PreserveMode=true,BaseColor=Color.FromArgb(0,128,128),LightAccent=Color.FromArgb(0,84,227),DarkAccent=Color.FromArgb(242,154,46)}
     };
     readonly IconThemeOption[] iconThemes={
-      new IconThemeOption{Id="janus",Name="JANUS Fluent Soft 3D",FileName="Tema-Iconos-JANUS-v2.2.zip",DownloadUrl="https://github.com/momocrackcorp/janus-windows/releases/download/icon-themes-v1/Tema-Iconos-JANUS-v2.2.zip"},
-      new IconThemeOption{Id="crux",Name="Crux",FileName="Tema-Iconos-Crux.zip",DownloadUrl="https://github.com/momocrackcorp/janus-windows/releases/download/icon-themes-v1/Tema-Iconos-Crux.zip"},
-      new IconThemeOption{Id="newaita",Name="Newaita",FileName="Tema-Iconos-Newaita.zip",DownloadUrl="https://github.com/momocrackcorp/janus-windows/releases/download/icon-themes-v1/Tema-Iconos-Newaita.zip"},
-      new IconThemeOption{Id="papirus",Name="Papirus",FileName="Tema-Iconos-Papirus.zip",DownloadUrl="https://github.com/momocrackcorp/janus-windows/releases/download/icon-themes-v1/Tema-Iconos-Papirus.zip"},
-      new IconThemeOption{Id="whitesur",Name="WhiteSur",FileName="Tema-Iconos-WhiteSur.zip",DownloadUrl="https://github.com/momocrackcorp/janus-windows/releases/download/icon-themes-v1/Tema-Iconos-WhiteSur.zip"},
-      new IconThemeOption{Id="lacapitaine",Name="La Capitaine",FileName="Tema-Iconos-La-Capitaine.zip",DownloadUrl="https://github.com/momocrackcorp/janus-windows/releases/download/icon-themes-v1/Tema-Iconos-La-Capitaine.zip"},
-      new IconThemeOption{Id="retro",Name="Retro",FileName="Tema-Iconos-Retro.zip",DownloadUrl="https://github.com/momocrackcorp/janus-windows/releases/download/icon-themes-v1/Tema-Iconos-Retro.zip"}
+      new IconThemeOption{Id="janus",Name="JANUS Fluent Soft 3D",FileName="Tema-Iconos-JANUS-v2.2.zip",DownloadUrl="https://github.com/momocrackcorp/janus-plus-windows/releases/download/icon-themes-v1/Tema-Iconos-JANUS-v2.2.zip"},
+      new IconThemeOption{Id="crux",Name="Crux",FileName="Tema-Iconos-Crux.zip",DownloadUrl="https://github.com/momocrackcorp/janus-plus-windows/releases/download/icon-themes-v1/Tema-Iconos-Crux.zip"},
+      new IconThemeOption{Id="newaita",Name="Newaita",FileName="Tema-Iconos-Newaita.zip",DownloadUrl="https://github.com/momocrackcorp/janus-plus-windows/releases/download/icon-themes-v1/Tema-Iconos-Newaita.zip"},
+      new IconThemeOption{Id="papirus",Name="Papirus",FileName="Tema-Iconos-Papirus.zip",DownloadUrl="https://github.com/momocrackcorp/janus-plus-windows/releases/download/icon-themes-v1/Tema-Iconos-Papirus.zip"},
+      new IconThemeOption{Id="whitesur",Name="WhiteSur",FileName="Tema-Iconos-WhiteSur.zip",DownloadUrl="https://github.com/momocrackcorp/janus-plus-windows/releases/download/icon-themes-v1/Tema-Iconos-WhiteSur.zip"},
+      new IconThemeOption{Id="lacapitaine",Name="La Capitaine",FileName="Tema-Iconos-La-Capitaine.zip",DownloadUrl="https://github.com/momocrackcorp/janus-plus-windows/releases/download/icon-themes-v1/Tema-Iconos-La-Capitaine.zip"},
+      new IconThemeOption{Id="retro",Name="Retro",FileName="Tema-Iconos-Retro.zip",DownloadUrl="https://github.com/momocrackcorp/janus-plus-windows/releases/download/icon-themes-v1/Tema-Iconos-Retro.zip"}
     };
 
     WindowsThemeOption SelectedWindowsTheme { get { return windowsThemeSelector.SelectedItem as WindowsThemeOption??windowsThemes[0]; } }

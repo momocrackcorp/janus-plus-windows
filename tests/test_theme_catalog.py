@@ -22,6 +22,8 @@ class ThemeCatalogTests(unittest.TestCase):
     def test_all_theme_downloads_use_the_dedicated_release(self):
         self.assertEqual(SOURCE.count("releases/download/icon-themes-v1/"), 6)
         self.assertNotIn("releases/download/v2.3.0-rc.2/", SOURCE)
+        self.assertIn("momocrackcorp/janus-plus-windows", SOURCE)
+        self.assertNotIn("momocrackcorp/janus-windows", SOURCE)
 
     def test_theme_packages_are_not_embedded(self):
         self.assertNotIn("janus-icons", BUILD.lower())

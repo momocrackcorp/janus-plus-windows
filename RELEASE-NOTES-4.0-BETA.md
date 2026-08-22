@@ -1,4 +1,6 @@
-# JANUS+ 4.0 Beta
+# JANUS+ 4.00 B — Beta de test
+
+Elaborada el 22 de agosto de 2026.
 
 Primera versión beta con la identidad **JANUS+**, orientada a reunir migración segura, recuperación, puesta a punto y personalización de Windows en una sola aplicación.
 
