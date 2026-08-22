@@ -36,6 +36,26 @@ class DualityThemeTests(unittest.TestCase):
         self.assertIn("SelectedIconTheme.DownloadUrl", SOURCE)
         self.assertNotIn('ToolButton("Tema JANUS…"', MAIN)
 
+    def test_windows_themes_can_be_downloaded_and_installed_in_app(self):
+        self.assertIn('WindowsThemeReleaseBase = "https://github.com/momocrackcorp/janus-plus-windows/releases/download/windows-themes-v1/"', SOURCE)
+        self.assertIn('downloadTheme.Text="Descargar e instalar"', SOURCE)
+        self.assertIn("async void DownloadThemePackage()", SOURCE)
+        self.assertIn("DownloadFileTaskAsync", SOURCE)
+        self.assertIn("InstallArchive(temporary,ThemeDirectory,false)", SOURCE)
+        self.assertIn("Todavía no se aplicó ningún cambio", SOURCE)
+        self.assertIn("e.ProgressPercentage", SOURCE)
+
+    def test_legacy_duality_and_crux_sound_sets_are_valid(self):
+        self.assertIn("public bool ForceLight,Slideshow,PreserveMode,SessionSounds", SOURCE)
+        for theme in ("newaita", "papirus", "whitesur", "lacapitaine", "retro"):
+            definition = next(line for line in SOURCE.splitlines() if f'Id="{theme}"' in line and "WindowsThemeOption" in line)
+            self.assertIn("SessionSounds=true", definition)
+        for theme in ("duality", "crux"):
+            definition = next(line for line in SOURCE.splitlines() if f'Id="{theme}"' in line and "WindowsThemeOption" in line)
+            self.assertNotIn("SessionSounds=true", definition)
+        self.assertIn("if(selected.SessionSounds)", SOURCE)
+        self.assertIn('new[]{"notify","complete","question","warning","error","start"}', SOURCE)
+
     def test_icon_packages_have_an_integrated_non_destructive_preview(self):
         for text in (
             'iconPreviewButton.Text="Vista previa"',
@@ -76,7 +96,7 @@ class DualityThemeTests(unittest.TestCase):
         self.assertIn("AutoScaleMode=AutoScaleMode.None", SOURCE)
         self.assertIn("Height=810,MinimumSize=new Size(940,810)", SOURCE)
         self.assertIn("Dock=DockStyle.Top,Height=260", SOURCE)
-        self.assertIn("SizeType.Absolute,165", SOURCE)
+        self.assertIn("SizeType.Absolute,194", SOURCE)
         self.assertIn("SizeType.Absolute,68", SOURCE)
         self.assertIn("applyDesktopIcons.Size=new Size(238,34)", MAIN)
         self.assertIn('Text="Equipo",AutoSize=true,Anchor=AnchorStyles.Left', MAIN)

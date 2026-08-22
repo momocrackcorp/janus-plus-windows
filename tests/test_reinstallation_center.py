@@ -126,11 +126,11 @@ class ReinstallationCenterTests(unittest.TestCase):
     def test_janus_plus_beta_version_is_visible(self):
         self.assertIn('AssemblyTitle("JANUS+")', MAIN)
         self.assertIn('AssemblyProduct("JANUS+")', MAIN)
-        self.assertIn('DisplayVersion="4.00 B (Beta de test)"', MAIN)
+        self.assertIn('DisplayVersion="4.00 Beta 1"', MAIN)
         self.assertIn("22 de agosto de 2026", MAIN)
         self.assertIn('AssemblyVersion("4.0.0.0")', MAIN)
-        self.assertIn('AssemblyFileVersion("4.0.0.0")', MAIN)
-        self.assertIn('AssemblyInformationalVersion("4.0.0-beta")', MAIN)
+        self.assertIn('AssemblyFileVersion("4.0.0.1")', MAIN)
+        self.assertIn('AssemblyInformationalVersion("4.0.0-beta.1")', MAIN)
         self.assertIn('Text="JANUS+ — Migración segura y puesta a punto"', MAIN)
 
 

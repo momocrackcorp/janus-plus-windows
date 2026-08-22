@@ -20,11 +20,11 @@ using Microsoft.Win32;
 [assembly: AssemblyProduct("JANUS+")]
 [assembly: AssemblyCopyright("Copyright © Omar Aguila MMXXVI")]
 [assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.0")]
-[assembly: AssemblyInformationalVersion("4.0.0-beta")]
+[assembly: AssemblyFileVersion("4.0.0.1")]
+[assembly: AssemblyInformationalVersion("4.0.0-beta.1")]
 
 namespace MigradorSeguro {
-  static class AppInfo { public const string DisplayVersion="4.00 B (Beta de test)"; }
+  static class AppInfo { public const string DisplayVersion="4.00 Beta 1"; }
   static class Program {
     [STAThread] static void Main() {
       Application.EnableVisualStyles();

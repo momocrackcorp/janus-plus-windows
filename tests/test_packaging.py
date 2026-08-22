@@ -9,9 +9,9 @@ NOTES = (ROOT / "RELEASE-NOTES-4.0-BETA.md").read_text(encoding="utf-8")
 
 class JanusPlusPackagingTests(unittest.TestCase):
     def test_beta_package_has_stable_release_identity(self):
-        self.assertIn('Version = "4.0.0-beta"', SCRIPT)
+        self.assertIn('Version = "4.0.0-beta.1"', SCRIPT)
         self.assertIn('"JANUS-Plus-$Version"', SCRIPT)
-        self.assertIn("JANUS+ 4.00 B", NOTES)
+        self.assertIn("JANUS+ 4.00 Beta 1", NOTES)
         self.assertIn("22 de agosto de 2026", NOTES)
 
     def test_package_contains_binary_docs_notes_and_hash(self):

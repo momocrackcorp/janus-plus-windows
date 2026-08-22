@@ -1,8 +1,15 @@
-# JANUS+ 4.00 B — Beta de test
+# JANUS+ 4.00 Beta 1
 
 Elaborada el 22 de agosto de 2026.
 
 Primera versión beta con la identidad **JANUS+**, orientada a reunir migración segura, recuperación, puesta a punto y personalización de Windows en una sola aplicación.
+
+## Correcciones de Beta 1
+
+- Descarga directa de cada tema desde el selector, con progreso visible.
+- Validación e instalación segura del ZIP descargado sin aplicar automáticamente el tema.
+- Se conserva la carga manual de paquetes como alternativa.
+- Compatibilidad corregida con los sonidos originales de Duality y Crux.
 
 ## Cambios principales
 
