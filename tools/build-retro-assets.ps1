@@ -11,11 +11,12 @@ $sourceDir = Join-Path $themeRoot "Sources"
 $wallpaperDir = Join-Path $themeRoot "DesktopBackground"
 $previewDir = Join-Path $themeRoot "Preview"
 $cursorDir = Join-Path $themeRoot "Cursors"
+$cursorSourceDir = Join-Path $themeRoot "CursorSource"
 $soundDir = Join-Path $themeRoot "Sounds"
 $iconDir = Join-Path $themeRoot "Icons"
 $watermarkPath = Join-Path $sourceDir "JANUS-Retro-watermark.png"
 $dist = Join-Path $repo "dist\themes"
-foreach ($directory in @($themeRoot,$sourceDir,$wallpaperDir,$previewDir,$cursorDir,$soundDir,$iconDir,$dist)) { New-Item -ItemType Directory -Force -Path $directory | Out-Null }
+foreach ($directory in @($themeRoot,$sourceDir,$wallpaperDir,$previewDir,$cursorDir,$cursorSourceDir,$soundDir,$iconDir,$dist)) { New-Item -ItemType Directory -Force -Path $directory | Out-Null }
 foreach ($directory in @($wallpaperDir,$previewDir,$cursorDir,$soundDir,$iconDir)) { Get-ChildItem -LiteralPath $directory -File -ErrorAction SilentlyContinue | Remove-Item -Force }
 
 $classicBlue = [Drawing.Color]::FromArgb(0,84,227)
@@ -132,8 +133,9 @@ $wallpapers=@(@("Pradera","JANUS-Retro-Pradera-source.png"),@("Nubes","JANUS-Ret
 New-JanusWatermark
 foreach($wallpaper in $wallpapers){$source=Join-Path $sourceDir $wallpaper[1];if(!(Test-Path -LiteralPath $source)){throw "Falta la fuente $($wallpaper[1])"};$watermarked=$wallpaper[0] -in @("Nubes","Bosque");New-CoverImage $source 3840 2160 (Join-Path $wallpaperDir ("JANUS-Retro-"+$wallpaper[0]+"-4K.jpg")) $watermarked;New-CoverImage $source 5120 2160 (Join-Path $wallpaperDir ("JANUS-Retro-"+$wallpaper[0]+"-Ultrawide-5K.jpg")) $watermarked;if($wallpaper[0] -in @("Pradera","Puma","Mosaico98")){New-CoverImage $source 960 540 (Join-Path $previewDir ("JANUS-Retro-"+$wallpaper[0]+"-preview.png"))}}
 
-foreach($cursor in @(@("arrow","arrow",7,5),@("help","help",7,5),@("hand","hand",18,9),@("ibeam","ibeam",32,32),@("cross","cross",32,32),@("move","move",32,32),@("size-ns","ns",32,32),@("size-we","we",32,32),@("size-nwse","nwse",32,32),@("size-nesw","nesw",32,32),@("up","up",32,3),@("no","no",7,5),@("pen","pen",9,56))){New-RetroCursor ("retro-"+$cursor[0]+".cur") $cursor[1] $cursor[2] $cursor[3]}
-New-RetroAni "retro-working.ani" $true;New-RetroAni "retro-busy.ani" $false
+$approvedCursors=Get-ChildItem -LiteralPath $cursorSourceDir -File | Where-Object{$_.Extension -in @('.cur','.ani')}
+if($approvedCursors.Count -ne 15){throw "El juego aprobado de cursores Retro debe contener exactamente 15 archivos."}
+$approvedCursors|Copy-Item -Destination $cursorDir -Force
 
 New-RetroSound "retro-notify.wav" @(659.25,783.99) 90
 New-RetroSound "retro-question.wav" @(523.25,659.25) 115
@@ -165,6 +167,6 @@ Set-Content -LiteralPath (Join-Path $themeRoot "README.txt") -Value $readme -Enc
 $themeZip=Join-Path $dist "JANUS-Retro-v1.zip";$iconsZip=Join-Path $dist "Tema-Iconos-Retro.zip"
 Remove-Item -LiteralPath $themeZip,$iconsZip -Force -ErrorAction SilentlyContinue
 $archive=[IO.Compression.ZipFile]::Open($themeZip,[IO.Compression.ZipArchiveMode]::Create)
-try{Get-ChildItem -LiteralPath $themeRoot -File -Recurse|Where-Object{$_.FullName -notlike "$sourceDir\*" -and $_.FullName -notlike "$iconDir\*"}|ForEach-Object{$relative=$_.FullName.Substring($themeRoot.Length+1).Replace("\","/");[IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$_.FullName,$relative,[IO.Compression.CompressionLevel]::Optimal)|Out-Null}}finally{$archive.Dispose()}
+try{Get-ChildItem -LiteralPath $themeRoot -File -Recurse|Where-Object{$_.FullName -notlike "$sourceDir\*" -and $_.FullName -notlike "$cursorSourceDir\*" -and $_.FullName -notlike "$iconDir\*"}|ForEach-Object{$relative=$_.FullName.Substring($themeRoot.Length+1).Replace("\","/");[IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$_.FullName,$relative,[IO.Compression.CompressionLevel]::Optimal)|Out-Null}}finally{$archive.Dispose()}
 Compress-Archive -Path (Join-Path $iconDir "*") -DestinationPath $iconsZip -CompressionLevel Optimal -Force
 Get-FileHash $themeZip,$iconsZip -Algorithm SHA256|Select-Object Path,Hash

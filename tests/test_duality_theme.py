@@ -16,6 +16,7 @@ PAPIRUS = ROOT / "assets" / "windows-themes" / "papirus"
 WHITESUR = ROOT / "assets" / "windows-themes" / "whitesur"
 LACAPITAINE = ROOT / "assets" / "windows-themes" / "lacapitaine"
 RETRO = ROOT / "assets" / "windows-themes" / "retro"
+SILICON = ROOT / "assets" / "windows-themes" / "silicon"
 
 
 def external_payload_available(theme):
@@ -30,14 +31,14 @@ class DualityThemeTests(unittest.TestCase):
         self.assertIn("form.TopLevel=false", MAIN)
 
     def test_icon_catalog_is_integrated_in_themes(self):
-        for name in ("JANUS Fluent Soft 3D", "Crux", "Newaita", "Papirus", "WhiteSur", "La Capitaine", "Retro"):
+        for name in ("JANUS Fluent Soft 3D", "Crux", "Newaita", "Papirus", "WhiteSur", "La Capitaine", "Retro", "Silicon"):
             self.assertIn(f'Name="{name}"', SOURCE)
         self.assertIn("iconThemeSelector.Items.AddRange(iconThemes)", SOURCE)
         self.assertIn("SelectedIconTheme.DownloadUrl", SOURCE)
         self.assertNotIn('ToolButton("Tema JANUS…"', MAIN)
 
     def test_windows_themes_can_be_downloaded_and_installed_in_app(self):
-        self.assertIn('WindowsThemeReleaseBase = "https://github.com/momocrackcorp/janus-plus-windows/releases/download/windows-themes-v1/"', SOURCE)
+        self.assertIn('WindowsThemeReleaseBase = "https://github.com/momocrackcorp/janus-plus-windows/releases/download/v4.0.0-rc.1/"', SOURCE)
         self.assertIn('downloadTheme.Text="Descargar e instalar"', SOURCE)
         self.assertIn("async void DownloadThemePackage()", SOURCE)
         self.assertIn("DownloadFileTaskAsync", SOURCE)
@@ -47,7 +48,7 @@ class DualityThemeTests(unittest.TestCase):
 
     def test_legacy_duality_and_crux_sound_sets_are_valid(self):
         self.assertIn("public bool ForceLight,Slideshow,PreserveMode,SessionSounds", SOURCE)
-        for theme in ("newaita", "papirus", "whitesur", "lacapitaine", "retro"):
+        for theme in ("newaita", "papirus", "whitesur", "lacapitaine", "retro", "silicon"):
             definition = next(line for line in SOURCE.splitlines() if f'Id="{theme}"' in line and "WindowsThemeOption" in line)
             self.assertIn("SessionSounds=true", definition)
         for theme in ("duality", "crux"):
@@ -104,16 +105,26 @@ class DualityThemeTests(unittest.TestCase):
     def test_icon_application_covers_real_known_folders_and_both_drive_locations(self):
         for folder_id in (
             "FDD39AD0-238F-46AF-ADB4-6C85480369C7",
+            "A8CDFF1C-4878-43BE-B5FD-F8091C1C60D0",
+            "d3162b92-9365-467a-956b-92703aca08af",
             "374DE290-123F-4565-9164-39C4925E467B",
+            "088e3905-0323-4b02-9826-5d99428e115f",
             "B4BFCC3A-DB2C-424C-B029-7FE99A87C641",
             "33E28130-4E1E-4676-835A-98395C3BC3BB",
+            "3ADD1653-EB32-4CB0-BBD7-DFA0ABB5ACCA",
+            "24ad3ad4-a569-4530-98e1-ab02f9417aa8",
             "4BD8D571-6D19-48D3-BE97-422220080E43",
+            "1CF1260C-4DD0-4EBB-811F-33C572699FDE",
+            "3dfdf296-dbec-4fb4-81d1-6a3438bcf4de",
             "18989B1D-99B5-455B-841C-AB7C74E4DDFC",
+            "A0953C92-50DC-43BF-BE83-3742FED03C9C",
+            "f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a",
         ):
             self.assertIn(folder_id, SOURCE)
         self.assertIn("DriveIconKeys", SOURCE)
         self.assertIn("Software\\Classes\\Applications\\Explorer.exe\\Drives", SOURCE)
-        self.assertIn("SetIconValue(quickAccessId", SOURCE)
+        self.assertIn("foreach(string shellId in shellIds)SetIconValue", SOURCE)
+        self.assertIn('ie4uinit.exe","-ClearIconCache', SOURCE)
 
     def test_footer_buttons_use_a_non_clipping_layout(self):
         self.assertIn("var footer=new TableLayoutPanel", SOURCE)
@@ -143,6 +154,8 @@ class DualityThemeTests(unittest.TestCase):
             self.assertIn(f"LaCapitaine{variant}Preview.png", BUILD)
         for variant in ("Pradera", "Puma", "Mosaico98"):
             self.assertIn(f"Retro{variant}Preview.png", BUILD)
+        for variant in ("Ciudad", "Hardware", "Pixeles"):
+            self.assertIn(f"Silicon{variant}Preview.png", BUILD)
         for folder in ("DesktopBackground", "Cursors", "Sounds", "Icons"):
             self.assertNotIn(f"theme-packs\\duality\\{folder}\\*", BUILD)
             self.assertNotIn(f"windows-themes\\crux\\{folder}\\*", BUILD)
@@ -151,12 +164,14 @@ class DualityThemeTests(unittest.TestCase):
             self.assertNotIn(f"windows-themes\\whitesur\\{folder}\\*", BUILD)
             self.assertNotIn(f"windows-themes\\lacapitaine\\{folder}\\*", BUILD)
             self.assertNotIn(f"windows-themes\\retro\\{folder}\\*", BUILD)
+            self.assertNotIn(f"windows-themes\\silicon\\{folder}\\*", BUILD)
         self.assertNotIn("JANUS-Crux-v1.zip", BUILD)
         self.assertNotIn("JANUS-Newaita-v1.zip", BUILD)
         self.assertNotIn("JANUS-Papirus-v1.zip", BUILD)
         self.assertNotIn("JANUS-WhiteSur-v1.zip", BUILD)
         self.assertNotIn("JANUS-LaCapitaine-v1.zip", BUILD)
         self.assertNotIn("JANUS-Retro-v1.zip", BUILD)
+        self.assertNotIn("JANUS-Silicon-v1.zip", BUILD)
 
     def test_components_are_individually_selectable(self):
         for label in (
@@ -528,6 +543,92 @@ class DualityThemeTests(unittest.TestCase):
             self.assertIn(component, script)
         self.assertIn("sampleRate=22050", script)
         self.assertIn("geometría funcional de los escritorios 3.11", script)
+
+    def test_silicon_is_external_and_uses_the_hardware_palette(self):
+        for value in (
+            'Id="silicon"', 'Name="JANUS Silicon"',
+            'PackageFile="JANUS-Silicon-v1.zip"', 'ManifestId="janus-silicon"',
+            'Prefix="silicon"', 'Variants=new[]{"Ciudad","Hardware","Pixeles"}',
+            'Wallpapers=new[]{"Ciudad","Hardware","GPU","HDD","SSD","PSU","Pixeles"}',
+            'BaseColor=Color.FromArgb(35,45,55)',
+            'LightAccent=Color.FromArgb(0,174,220)',
+            'DarkAccent=Color.FromArgb(205,126,62)',
+            'Slideshow=true', 'PreserveMode=true', 'SessionSounds=true',
+            'FileName="Tema-Iconos-Silicon.zip"',
+        ):
+            self.assertIn(value, SOURCE)
+        self.assertIn('if(token=="Pixeles")return "Píxeles"', SOURCE)
+
+    @unittest.skipUnless(external_payload_available(SILICON), "recursos externos no incluidos en Git")
+    def test_silicon_assets_and_external_packages_are_complete(self):
+        manifest = json.loads((SILICON / "manifest.json").read_text(encoding="utf-8-sig"))
+        variants = ["Ciudad", "Hardware", "Pixeles"]
+        wallpapers = ["Ciudad", "Hardware", "GPU", "HDD", "SSD", "PSU", "Pixeles"]
+        self.assertEqual(manifest["id"], "janus-silicon")
+        self.assertEqual(manifest["baseColor"], "#232D37")
+        self.assertEqual(manifest["accentColor"], "#00AEDC")
+        self.assertEqual(manifest["secondaryAccentColor"], "#CD7E3E")
+        self.assertEqual(manifest["variants"], variants)
+        self.assertEqual(manifest["wallpapers"], wallpapers)
+        self.assertEqual(manifest["slideshowMinutes"], 30)
+        self.assertTrue(manifest["shuffle"])
+        self.assertTrue(manifest["preserveWindowsMode"])
+        self.assertTrue(manifest["safe"])
+        self.assertTrue(manifest["reversible"])
+        self.assertIn("Crystal Blue", manifest["cursorStyle"])
+        self.assertIn("Crystal Remix", manifest["iconSource"])
+        self.assertEqual(len(list((SILICON / "Cursors").glob("*.cur"))), 13)
+        self.assertEqual(len(list((SILICON / "Cursors").glob("*.ani"))), 2)
+        self.assertEqual(len(list((SILICON / "Sounds").glob("*.wav"))), 9)
+        self.assertEqual(len(list((SILICON / "Icons").glob("*.ico"))), 14)
+        self.assertEqual(len(list((SILICON / "Icons").glob("*.png"))), 14)
+        for wallpaper in wallpapers:
+            for suffix in ("-4K.jpg", "-Ultrawide-5K.jpg"):
+                self.assertTrue((SILICON / "DesktopBackground" / f"JANUS-Silicon-{wallpaper}{suffix}").is_file())
+        for variant in variants:
+            self.assertTrue((SILICON / "Preview" / f"JANUS-Silicon-{variant}-preview.png").is_file())
+        theme_zip = ROOT / "dist" / "themes" / "JANUS-Silicon-v1.zip"
+        icon_zip = ROOT / "dist" / "themes" / "Tema-Iconos-Silicon.zip"
+        self.assertTrue(theme_zip.is_file())
+        self.assertTrue(icon_zip.is_file())
+        with zipfile.ZipFile(theme_zip) as package:
+            names = package.namelist()
+            self.assertFalse(any("Concepts/" in name or "-source." in name for name in names))
+            self.assertFalse(any(name.startswith("Icons/") for name in names))
+            self.assertIn("README.txt", names)
+        with zipfile.ZipFile(icon_zip) as package:
+            names = package.namelist()
+            self.assertEqual(len([name for name in names if name.endswith(".png")]), 14)
+            self.assertEqual(len([name for name in names if name.endswith(".ico")]), 14)
+            self.assertIn("TEMA.txt", names)
+            self.assertIn("ATRIBUCION.txt", names)
+            self.assertIn("CRYSTAL-REMIX-README.md", names)
+        for cursor in (SILICON / "Cursors").glob("*.cur"):
+            self.assertEqual(struct.unpack("<HHH", cursor.read_bytes()[:6]), (0, 2, 1))
+        for animation in (SILICON / "Cursors").glob("*.ani"):
+            data = animation.read_bytes()
+            self.assertEqual(data[:4], b"RIFF")
+            self.assertEqual(data[8:12], b"ACON")
+        sound_hashes = set()
+        for sound in (SILICON / "Sounds").glob("*.wav"):
+            data = sound.read_bytes()
+            self.assertEqual(data[:4], b"RIFF")
+            self.assertEqual(data[8:12], b"WAVE")
+            sound_hashes.add(hash(data))
+        self.assertEqual(len(sound_hashes), 9)
+
+    def test_silicon_uses_original_hardware_audio_components(self):
+        script = (ROOT / "tools" / "build-silicon-assets.ps1").read_text(encoding="utf-8")
+        for component in ("Add-SiliconFan", "'notify'", "'error'", "'start'", "'warning'"):
+            self.assertIn(component, script)
+        self.assertNotIn("youtube.com", script.lower())
+
+    def test_silicon_icons_use_the_approved_crystal_remix_sources(self):
+        script = (ROOT / "tools" / "build-silicon-icons.ps1").read_text(encoding="utf-8")
+        for source in ("devices\\computer.png", "places\\user-home.png", "places\\folder-documents.png", "devices\\drive-harddisk.png"):
+            self.assertIn(source, script)
+        self.assertIn("Crystal Remix", script)
+        self.assertIn("GNU Lesser General Public License", script)
 
     def test_applied_themes_are_registered_in_windows_personalization(self):
         self.assertIn('"Microsoft","Windows","Themes"', SOURCE)

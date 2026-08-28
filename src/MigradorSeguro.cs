@@ -20,11 +20,11 @@ using Microsoft.Win32;
 [assembly: AssemblyProduct("JANUS+")]
 [assembly: AssemblyCopyright("Copyright © Omar Aguila MMXXVI")]
 [assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.1")]
-[assembly: AssemblyInformationalVersion("4.0.0-beta.1")]
+[assembly: AssemblyFileVersion("4.0.0.2")]
+[assembly: AssemblyInformationalVersion("4.0.0-rc.1")]
 
 namespace MigradorSeguro {
-  static class AppInfo { public const string DisplayVersion="4.00 Beta 1"; }
+  static class AppInfo { public const string DisplayVersion="4.00 RC 1"; }
   static class Program {
     [STAThread] static void Main() {
       Application.EnableVisualStyles();
@@ -468,7 +468,7 @@ namespace MigradorSeguro {
       card.Controls.Add(new Label{Text="JANUS+",Font=new Font("Segoe UI",25,FontStyle.Bold),Location=new Point(216,35),AutoSize=true});card.Controls.Add(new Label{Text="Versión "+AppInfo.DisplayVersion,Font=new Font("Segoe UI",12,FontStyle.Bold),ForeColor=Color.FromArgb(39,125,161),Location=new Point(220,88),AutoSize=true});card.Controls.Add(new Label{Text="Migración segura, recuperación, personalización y puesta a punto de Windows en una sola herramienta.",Font=new Font("Segoe UI",11),Location=new Point(220,125),Size=new Size(560,55)});card.Controls.Add(new Label{BorderStyle=BorderStyle.Fixed3D,Location=new Point(34,201),Size=new Size(770,2)});
       var identity=new GroupBox{Text="Nombre y propósito",Location=new Point(34,224),Size=new Size(365,135)};identity.Controls.Add(new Label{Text="Jano (Janus), dios romano de las transiciones, comienzos, finales, puertas y cambios. Sus dos rostros miran al pasado y al futuro: sistema viejo → sistema nuevo.",Location=new Point(18,29),Size=new Size(330,88)});card.Controls.Add(identity);
       var creation=new GroupBox{Text="Cómo fue realizado",Location=new Point(417,224),Size=new Size(387,135)};creation.Controls.Add(new Label{Text="Aplicación nativa para Windows desarrollada en C# con Windows Forms y .NET Framework. Utiliza API oficiales, operaciones reversibles y verificación SHA-256.",Location=new Point(18,29),Size=new Size(350,88)});card.Controls.Add(creation);
-      var realization=new GroupBox{Text="Realización",Location=new Point(34,378),Size=new Size(365,120)};realization.Controls.Add(new Label{Text="22 de agosto de 2026\nPueblo Seco, Ñuble, Chile",Font=new Font("Segoe UI",10),Location=new Point(18,31),Size=new Size(330,62)});card.Controls.Add(realization);
+      var realization=new GroupBox{Text="Realización",Location=new Point(34,378),Size=new Size(365,120)};realization.Controls.Add(new Label{Text="27 de agosto de 2026\nPueblo Seco, Ñuble, Chile",Font=new Font("Segoe UI",10),Location=new Point(18,31),Size=new Size(330,62)});card.Controls.Add(realization);
       var authorship=new GroupBox{Text="Autoría",Location=new Point(417,378),Size=new Size(387,120)};authorship.Controls.Add(new Label{Text="Omar Aguila\nLaboratorios Momocrackcorp",Font=new Font("Segoe UI",11,FontStyle.Bold),ForeColor=Color.FromArgb(25,92,135),Location=new Point(18,29),Size=new Size(350,66)});card.Controls.Add(authorship);
       card.Controls.Add(new Label{Text="JANUS prioriza cambios seguros, verificables y reversibles.",ForeColor=Color.FromArgb(80,90,103),TextAlign=ContentAlignment.MiddleCenter,Location=new Point(34,514),Size=new Size(770,28)});if(!embedded){var close=new Button{Text="Cerrar",Location=new Point(684,514),Size=new Size(120,30)};close.Click+=(s,e)=>Close();card.Controls.Add(close);}
     }

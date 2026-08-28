@@ -123,14 +123,14 @@ class ReinstallationCenterTests(unittest.TestCase):
         self.assertIn("Las claves nunca se agregan a informes, historial ni a la Mochila completa", SOURCE)
         self.assertNotIn('Record("Licencias"', SOURCE)
 
-    def test_janus_plus_beta_version_is_visible(self):
+    def test_janus_plus_rc_version_is_visible(self):
         self.assertIn('AssemblyTitle("JANUS+")', MAIN)
         self.assertIn('AssemblyProduct("JANUS+")', MAIN)
-        self.assertIn('DisplayVersion="4.00 Beta 1"', MAIN)
-        self.assertIn("22 de agosto de 2026", MAIN)
+        self.assertIn('DisplayVersion="4.00 RC 1"', MAIN)
+        self.assertIn("27 de agosto de 2026", MAIN)
         self.assertIn('AssemblyVersion("4.0.0.0")', MAIN)
-        self.assertIn('AssemblyFileVersion("4.0.0.1")', MAIN)
-        self.assertIn('AssemblyInformationalVersion("4.0.0-beta.1")', MAIN)
+        self.assertIn('AssemblyFileVersion("4.0.0.2")', MAIN)
+        self.assertIn('AssemblyInformationalVersion("4.0.0-rc.1")', MAIN)
         self.assertIn('Text="JANUS+ — Migración segura y puesta a punto"', MAIN)
 
 

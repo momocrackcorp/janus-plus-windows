@@ -3,7 +3,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = (ROOT / "src" / "MigradorSeguro.cs").read_text(encoding="utf-8")
+MAIN_SOURCE = (ROOT / "src" / "MigradorSeguro.cs").read_text(encoding="utf-8")
+THEME_SOURCE = (ROOT / "src" / "DualityThemeForm.cs").read_text(encoding="utf-8")
+SOURCE = MAIN_SOURCE + "\n" + THEME_SOURCE
 BUILD = (ROOT / "build-native.ps1").read_text(encoding="utf-8")
 
 
@@ -15,12 +17,14 @@ class ThemeCatalogTests(unittest.TestCase):
             ("Papirus", "Papirus"),
             ("WhiteSur", "WhiteSur"),
             ("La Capitaine", "La-Capitaine"),
+            ("Retro", "Retro"),
+            ("Silicon", "Silicon"),
         ):
             self.assertIn(f'Name="{name}"', SOURCE)
             self.assertIn(f"Tema-Iconos-{package}.zip", SOURCE)
 
     def test_all_theme_downloads_use_the_dedicated_release(self):
-        self.assertEqual(SOURCE.count("releases/download/icon-themes-v1/"), 6)
+        self.assertEqual(THEME_SOURCE.count("releases/download/v4.0.0-rc.1/"), 9)
         self.assertNotIn("releases/download/v2.3.0-rc.2/", SOURCE)
         self.assertIn("momocrackcorp/janus-plus-windows", SOURCE)
         self.assertNotIn("momocrackcorp/janus-windows", SOURCE)
@@ -36,14 +40,19 @@ class ThemeCatalogTests(unittest.TestCase):
         self.assertIn('"IconThemes",SelectedTheme.Id', SOURCE)
 
     def test_folder_icon_changes_refresh_quick_access(self):
-        self.assertIn("NotifyFolderIconChanged(folder)", SOURCE)
-        self.assertIn("NotifyFolderIconChanged(item.Item2)", SOURCE)
+        self.assertIn("ApplyFolderIcon(folder.Item2,folder.Item3,folder.Item4)", SOURCE)
+        self.assertIn("foreach(string shellId in shellIds)SetIconValue", SOURCE)
+        self.assertIn("NotifyFolder(path)", SOURCE)
+        self.assertIn('ie4uinit.exe","-ClearIconCache', SOURCE)
+        self.assertIn('ie4uinit.exe","-show', SOURCE)
+        self.assertIn('Process.GetProcessesByName("explorer")', SOURCE)
         self.assertIn('EntryPoint="SHChangeNotify"', SOURCE)
 
     def test_quick_access_icons_are_backed_up_and_reversible(self):
-        self.assertIn("ApplyQuickAccessIcon(item.Item4,iconValue)", SOURCE)
-        self.assertIn("result[LegacyKeyPath(folder.Item4)]", SOURCE)
-        self.assertIn("if(!original.ContainsKey(entry.Key))", SOURCE)
+        self.assertIn("foreach(string shellId in folder.Item4)", SOURCE)
+        self.assertIn("foreach(string path in IconKeyPaths(shellId))AddCapture", SOURCE)
+        self.assertIn("MergeOriginalBackup(state)", SOURCE)
+        self.assertIn("RestoreState(state)", SOURCE)
         for clsid in (
             "A8CDFF1C-4878-43BE-B5FD-F8091C1C60D0",
             "374DE290-123F-4565-9164-39C4925E467B",
