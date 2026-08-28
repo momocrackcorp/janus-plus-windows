@@ -1,0 +1,9 @@
+SONIDOS PÚBLICOS DE JANUS RETRO
+
+Los nueve archivos WAV del tema fueron sintetizados desde cero para JANUS+.
+No contienen grabaciones ni muestras extraídas de Microsoft Windows ni de
+otros productos de terceros.
+
+El proyecto JANUS+ ofrece estos sonidos bajo Creative Commons Zero 1.0:
+https://creativecommons.org/publicdomain/zero/1.0/
+

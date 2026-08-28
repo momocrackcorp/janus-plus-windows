@@ -539,9 +539,13 @@ class DualityThemeTests(unittest.TestCase):
 
     def test_retro_uses_a_distinct_original_1990s_pc_audio_signature(self):
         script = (ROOT / "tools" / "build-retro-assets.ps1").read_text(encoding="utf-8")
-        for component in ("$squareWave", "$fmBell", "$lowPulse", "$noiseBurst"):
-            self.assertIn(component, script)
-        self.assertIn("sampleRate=22050", script)
+        sounds = sorted((RETRO / "SoundSource").glob("retro-*.wav"))
+        self.assertEqual(len(sounds), 9)
+        self.assertIn("$soundSourceDir", script)
+        self.assertIn("juego público de sonidos Retro", script)
+        license_text = (RETRO / "LICENCIA-SONIDOS-CC0.txt").read_text(encoding="utf-8")
+        self.assertIn("Creative Commons Zero 1.0", license_text)
+        self.assertIn("sintetizados desde cero", license_text)
         self.assertIn("geometría funcional de los escritorios 3.11", script)
 
     def test_silicon_is_external_and_uses_the_hardware_palette(self):
@@ -619,8 +623,14 @@ class DualityThemeTests(unittest.TestCase):
 
     def test_silicon_uses_original_hardware_audio_components(self):
         script = (ROOT / "tools" / "build-silicon-assets.ps1").read_text(encoding="utf-8")
-        for component in ("Add-SiliconFan", "'notify'", "'error'", "'start'", "'warning'"):
-            self.assertIn(component, script)
+        sounds = sorted((SILICON / "SoundSource").glob("silicon-*.wav"))
+        self.assertEqual(len(sounds), 9)
+        self.assertIn("Add-SiliconFan", script)
+        self.assertIn("$soundSourceDir", script)
+        self.assertIn("juego público de sonidos Silicon", script)
+        license_text = (SILICON / "LICENCIA-SONIDOS-CC0.txt").read_text(encoding="utf-8")
+        self.assertIn("Creative Commons Zero 1.0", license_text)
+        self.assertIn("sintetizados desde cero", license_text)
         self.assertNotIn("youtube.com", script.lower())
 
     def test_silicon_icons_use_the_approved_crystal_remix_sources(self):

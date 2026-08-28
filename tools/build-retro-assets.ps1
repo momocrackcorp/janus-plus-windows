@@ -13,10 +13,11 @@ $previewDir = Join-Path $themeRoot "Preview"
 $cursorDir = Join-Path $themeRoot "Cursors"
 $cursorSourceDir = Join-Path $themeRoot "CursorSource"
 $soundDir = Join-Path $themeRoot "Sounds"
+$soundSourceDir = Join-Path $themeRoot "SoundSource"
 $iconDir = Join-Path $themeRoot "Icons"
 $watermarkPath = Join-Path $sourceDir "JANUS-Retro-watermark.png"
 $dist = Join-Path $repo "dist\themes"
-foreach ($directory in @($themeRoot,$sourceDir,$wallpaperDir,$previewDir,$cursorDir,$cursorSourceDir,$soundDir,$iconDir,$dist)) { New-Item -ItemType Directory -Force -Path $directory | Out-Null }
+foreach ($directory in @($themeRoot,$sourceDir,$wallpaperDir,$previewDir,$cursorDir,$cursorSourceDir,$soundDir,$soundSourceDir,$iconDir,$dist)) { New-Item -ItemType Directory -Force -Path $directory | Out-Null }
 foreach ($directory in @($wallpaperDir,$previewDir,$cursorDir,$soundDir,$iconDir)) { Get-ChildItem -LiteralPath $directory -File -ErrorAction SilentlyContinue | Remove-Item -Force }
 
 $classicBlue = [Drawing.Color]::FromArgb(0,84,227)
@@ -90,12 +91,6 @@ function New-RetroAni([string]$name,[bool]$withArrow) {
     $listStream=New-Object IO.MemoryStream;$listWriter=New-Object IO.BinaryWriter $listStream;$listWriter.Write([Text.Encoding]::ASCII.GetBytes("fram"));foreach($cursor in $frames){$listWriter.Write([Text.Encoding]::ASCII.GetBytes("icon"));$listWriter.Write([UInt32]$cursor.Length);$listWriter.Write($cursor);if($cursor.Length%2){$listWriter.Write([byte]0)}};$listWriter.Flush();$list=$listStream.ToArray();$listWriter.Dispose();$listStream.Dispose();$writer.Write([Text.Encoding]::ASCII.GetBytes("LIST"));$writer.Write([UInt32]$list.Length);$writer.Write($list);if($list.Length%2){$writer.Write([byte]0)};$writer.Flush();$length=$stream.Length;$stream.Position=4;$writer.Write([UInt32]($length-8));$writer.Flush();[IO.File]::WriteAllBytes((Join-Path $cursorDir $name),$stream.ToArray());$writer.Dispose();$stream.Dispose()
 }
 
-function New-RetroSound([string]$name,[double[]]$notes,[int]$milliseconds) {
-    $sampleRate=22050;$samples=New-Object 'Collections.Generic.List[Int16]';$phaseSeed=17
-    foreach($frequency in $notes){$count=[int]($sampleRate*$milliseconds/1000);for($i=0;$i -lt $count;$i++){$time=$i/$sampleRate;$progress=$i/[Math]::Max(1,$count-1);$attack=[Math]::Min(1,$i/110);$release=[Math]::Pow(1-$progress,1.8);$envelope=$attack*$release;$squareWave=if([Math]::Sin(2*[Math]::PI*$frequency*$time) -ge 0){1.0}else{-1.0};$fmBell=[Math]::Sin(2*[Math]::PI*$frequency*$time+1.8*[Math]::Sin(2*[Math]::PI*($frequency*2.01)*$time))*[Math]::Exp(-4.5*$progress);$lowPulse=[Math]::Sin(2*[Math]::PI*($frequency/2)*$time)*[Math]::Exp(-7*$progress);$phaseSeed=(1103515245*$phaseSeed+12345)-band 0x7fffffff;$noiseBurst=(($phaseSeed/1073741824.0)-1.0)*[Math]::Exp(-35*$progress);$value=(0.34*$squareWave+0.55*$fmBell+0.16*$lowPulse+0.08*$noiseBurst)*$envelope;$samples.Add([Int16]([Math]::Max(-32767,[Math]::Min(32767,4100*$value))))};1..220|ForEach-Object{$samples.Add([Int16]0)}}
-    $stream=New-Object IO.MemoryStream;$writer=New-Object IO.BinaryWriter $stream;$length=$samples.Count*2;$writer.Write([Text.Encoding]::ASCII.GetBytes("RIFF"));$writer.Write([UInt32](36+$length));$writer.Write([Text.Encoding]::ASCII.GetBytes("WAVE"));$writer.Write([Text.Encoding]::ASCII.GetBytes("fmt "));$writer.Write([UInt32]16);$writer.Write([UInt16]1);$writer.Write([UInt16]1);$writer.Write([UInt32]$sampleRate);$writer.Write([UInt32]($sampleRate*2));$writer.Write([UInt16]2);$writer.Write([UInt16]16);$writer.Write([Text.Encoding]::ASCII.GetBytes("data"));$writer.Write([UInt32]$length);foreach($sample in $samples){$writer.Write($sample)};$writer.Flush();[IO.File]::WriteAllBytes((Join-Path $soundDir $name),$stream.ToArray());$writer.Dispose();$stream.Dispose()
-}
-
 function Save-Jpeg([Drawing.Image]$image,[string]$path,[long]$quality=93) {$codec=[Drawing.Imaging.ImageCodecInfo]::GetImageEncoders()|Where-Object{$_.MimeType -eq 'image/jpeg'}|Select-Object -First 1;$parameters=New-Object Drawing.Imaging.EncoderParameters 1;$parameters.Param[0]=New-Object Drawing.Imaging.EncoderParameter ([Drawing.Imaging.Encoder]::Quality),$quality;try{$image.Save($path,$codec,$parameters)}finally{$parameters.Param[0].Dispose();$parameters.Dispose()}}
 
 function New-JanusWatermark {
@@ -137,21 +132,15 @@ $approvedCursors=Get-ChildItem -LiteralPath $cursorSourceDir -File | Where-Objec
 if($approvedCursors.Count -ne 15){throw "El juego aprobado de cursores Retro debe contener exactamente 15 archivos."}
 $approvedCursors|Copy-Item -Destination $cursorDir -Force
 
-New-RetroSound "retro-notify.wav" @(659.25,783.99) 90
-New-RetroSound "retro-question.wav" @(523.25,659.25) 115
-New-RetroSound "retro-warning.wav" @(440.00,349.23) 125
-New-RetroSound "retro-error.wav" @(329.63,261.63) 145
-New-RetroSound "retro-complete.wav" @(523.25,659.25,783.99) 90
-New-RetroSound "retro-start.wav" @(261.63,392.00,523.25,659.25) 105
-New-RetroSound "retro-logon.wav" @(392.00,523.25,659.25) 105
-New-RetroSound "retro-logoff.wav" @(659.25,523.25,392.00) 105
-New-RetroSound "retro-exit.wav" @(523.25,392.00,293.66) 120
+$approvedSounds=Get-ChildItem -LiteralPath $soundSourceDir -File -Filter 'retro-*.wav'
+if($approvedSounds.Count -ne 9){throw "El juego público de sonidos Retro debe contener exactamente 9 archivos WAV."}
+$approvedSounds|Copy-Item -Destination $soundDir -Force
 
 foreach($baseName in @("este-equipo","archivos-usuario","red","papelera-vacia","papelera-llena","documentos","descargas","escritorio","imagenes","musica","videos","hdd-ssd","usb","unidad-red")){New-RetroIcon $baseName}
 Set-Content -LiteralPath (Join-Path $iconDir "TEMA.txt") -Value "retro" -Encoding UTF8
 Set-Content -LiteralPath (Join-Path $iconDir "ATRIBUCION.txt") -Value "Diseño original JANUS inspirado en la geometría funcional de los escritorios 3.11 y el volumen amable de la era XP, sin reproducir iconos ni marcas de terceros. Distribuido como complemento independiente de JANUS Retro." -Encoding UTF8
 
-$manifest=[ordered]@{id="janus-retro";version=1;displayName="JANUS Retro";publisher="Momocrackcorp";variants=@("Pradera","Puma","Mosaico98");wallpapers=@("Pradera","Nubes","Bosque","Puma","Mosaico98");slideshowMinutes=30;preserveWindowsMode=$true;watermarkedWallpapers=@("Nubes","Bosque");components=@("wallpapers","colors","cursors","sounds");baseColor="#008080";accentColor="#0054E3";secondaryAccentColor="#F29A2E";soundStyle="Original soft 1990s PC pulse, FM bell and digital startup signature";cursorStyle="Pixel-edged classic pointer adapted for high-DPI Windows 11";iconCompanion="Tema-Iconos-Retro.zip";safe=$true;reversible=$true}
+$manifest=[ordered]@{id="janus-retro";version=1;displayName="JANUS Retro";publisher="Momocrackcorp";variants=@("Pradera","Puma","Mosaico98");wallpapers=@("Pradera","Nubes","Bosque","Puma","Mosaico98");slideshowMinutes=30;preserveWindowsMode=$true;watermarkedWallpapers=@("Nubes","Bosque");components=@("wallpapers","colors","cursors","sounds");baseColor="#008080";accentColor="#0054E3";secondaryAccentColor="#F29A2E";soundStyle="Original public CC0 warm 1990s-style chimes, soft alerts and digital startup signature";cursorStyle="Pixel-edged classic pointer adapted for high-DPI Windows 11";iconCompanion="Tema-Iconos-Retro.zip";safe=$true;reversible=$true}
 $manifest|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $themeRoot "manifest.json") -Encoding UTF8
 
 $readme=@'
@@ -159,6 +148,7 @@ JANUS Retro
 
 Tema inspirado en la claridad y el optimismo visual de los escritorios de 1995–2001, reinterpretado para Windows 11.
 Incluye cinco fondos originales en rotación cada 30 minutos, cursores de bordes pixelados, una firma sonora digital propia y un complemento de iconos descargable por separado.
+Los nueve sonidos públicos fueron sintetizados desde cero para JANUS+ y se ofrecen bajo CC0; no contienen audio extraído de Microsoft Windows.
 Los fondos Nubes y Bosque incorporan una marca JANUS discreta; los otros tres fondos se conservan sin marca.
 Las imágenes fueron generadas para JANUS y no reproducen fondos, logotipos ni interfaces de terceros.
 '@
@@ -167,6 +157,6 @@ Set-Content -LiteralPath (Join-Path $themeRoot "README.txt") -Value $readme -Enc
 $themeZip=Join-Path $dist "JANUS-Retro-v1.zip";$iconsZip=Join-Path $dist "Tema-Iconos-Retro.zip"
 Remove-Item -LiteralPath $themeZip,$iconsZip -Force -ErrorAction SilentlyContinue
 $archive=[IO.Compression.ZipFile]::Open($themeZip,[IO.Compression.ZipArchiveMode]::Create)
-try{Get-ChildItem -LiteralPath $themeRoot -File -Recurse|Where-Object{$_.FullName -notlike "$sourceDir\*" -and $_.FullName -notlike "$cursorSourceDir\*" -and $_.FullName -notlike "$iconDir\*"}|ForEach-Object{$relative=$_.FullName.Substring($themeRoot.Length+1).Replace("\","/");[IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$_.FullName,$relative,[IO.Compression.CompressionLevel]::Optimal)|Out-Null}}finally{$archive.Dispose()}
+try{Get-ChildItem -LiteralPath $themeRoot -File -Recurse|Where-Object{$_.FullName -notlike "$sourceDir\*" -and $_.FullName -notlike "$cursorSourceDir\*" -and $_.FullName -notlike "$soundSourceDir\*" -and $_.FullName -notlike "$iconDir\*"}|ForEach-Object{$relative=$_.FullName.Substring($themeRoot.Length+1).Replace("\","/");[IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$_.FullName,$relative,[IO.Compression.CompressionLevel]::Optimal)|Out-Null}}finally{$archive.Dispose()}
 Compress-Archive -Path (Join-Path $iconDir "*") -DestinationPath $iconsZip -CompressionLevel Optimal -Force
 Get-FileHash $themeZip,$iconsZip -Algorithm SHA256|Select-Object Path,Hash

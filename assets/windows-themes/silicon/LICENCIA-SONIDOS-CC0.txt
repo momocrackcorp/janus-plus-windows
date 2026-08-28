@@ -1,0 +1,9 @@
+SONIDOS PÚBLICOS DE JANUS SILICON
+
+Los nueve archivos WAV del tema fueron sintetizados desde cero para JANUS+.
+No contienen grabaciones ni muestras extraídas de Microsoft Windows, películas,
+series, videojuegos ni otras franquicias.
+
+El proyecto JANUS+ ofrece estos sonidos bajo Creative Commons Zero 1.0:
+https://creativecommons.org/publicdomain/zero/1.0/
+

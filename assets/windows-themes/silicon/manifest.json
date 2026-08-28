@@ -1,38 +1,38 @@
-﻿{
-    "id":  "janus-silicon",
-    "version":  1,
-    "displayName":  "JANUS Silicon",
-    "publisher":  "Momocrackcorp",
-    "variants":  [
-                     "Ciudad",
-                     "Hardware",
-                     "Pixeles"
-                 ],
-    "wallpapers":  [
-                       "Ciudad",
-                       "Hardware",
-                       "GPU",
-                       "HDD",
-                       "SSD",
-                       "PSU",
-                       "Pixeles"
-                   ],
-    "slideshowMinutes":  30,
-    "shuffle":  true,
-    "preserveWindowsMode":  true,
-    "components":  [
-                       "wallpapers",
-                       "colors",
-                       "cursors",
-                       "sounds"
-                   ],
-    "baseColor":  "#232D37",
-    "accentColor":  "#00AEDC",
-    "secondaryAccentColor":  "#CD7E3E",
-    "soundStyle":  "Original hardware power-up, data chirps, radar pulses and triple electronic blaster-style error",
-    "cursorStyle":  "Crystal Blue classic pointers with cyan fill, white highlight, dark outline and animated cyan-copper ring",
-    "iconCompanion":  "Tema-Iconos-Silicon.zip",
-    "iconSource":  "Crystal Remix by Everaldo Coelho and Viet Dang, LGPL",
-    "safe":  true,
-    "reversible":  true
+{
+  "id": "janus-silicon",
+  "version": 1,
+  "displayName": "JANUS Silicon",
+  "publisher": "Momocrackcorp",
+  "variants": [
+    "Ciudad",
+    "Hardware",
+    "Pixeles"
+  ],
+  "wallpapers": [
+    "Ciudad",
+    "Hardware",
+    "GPU",
+    "HDD",
+    "SSD",
+    "PSU",
+    "Pixeles"
+  ],
+  "slideshowMinutes": 30,
+  "shuffle": true,
+  "preserveWindowsMode": true,
+  "components": [
+    "wallpapers",
+    "colors",
+    "cursors",
+    "sounds"
+  ],
+  "baseColor": "#232D37",
+  "accentColor": "#00AEDC",
+  "secondaryAccentColor": "#CD7E3E",
+  "soundStyle": "Original public CC0 digital chirps, FM shimmer, rising startup and descending shutdown signature",
+  "cursorStyle": "Crystal Blue classic pointers with cyan fill, white highlight, dark outline and animated cyan-copper ring",
+  "iconCompanion": "Tema-Iconos-Silicon.zip",
+  "iconSource": "Crystal Remix by Everaldo Coelho and Viet Dang, LGPL",
+  "safe": true,
+  "reversible": true
 }

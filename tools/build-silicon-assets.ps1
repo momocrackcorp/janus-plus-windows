@@ -13,9 +13,10 @@ $previewDir = Join-Path $themeRoot "Preview"
 $cursorDir = Join-Path $themeRoot "Cursors"
 $cursorSourceDir = Join-Path $themeRoot "CursorSource"
 $soundDir = Join-Path $themeRoot "Sounds"
+$soundSourceDir = Join-Path $themeRoot "SoundSource"
 $iconDir = Join-Path $themeRoot "Icons"
 $dist = Join-Path $repo "dist\themes"
-foreach($directory in @($themeRoot,$sourceDir,$wallpaperDir,$previewDir,$cursorDir,$cursorSourceDir,$soundDir,$iconDir,$dist)){New-Item -ItemType Directory -Force -Path $directory|Out-Null}
+foreach($directory in @($themeRoot,$sourceDir,$wallpaperDir,$previewDir,$cursorDir,$cursorSourceDir,$soundDir,$soundSourceDir,$iconDir,$dist)){New-Item -ItemType Directory -Force -Path $directory|Out-Null}
 foreach($directory in @($wallpaperDir,$cursorDir,$soundDir)){Get-ChildItem -LiteralPath $directory -File -ErrorAction SilentlyContinue|Remove-Item -Force}
 Get-ChildItem -LiteralPath $previewDir -File -Filter 'JANUS-Silicon-*-preview.png' -ErrorAction SilentlyContinue|Where-Object{$_.Name -ne 'JANUS-Silicon-Iconos-Explorer-preview.png'}|Remove-Item -Force
 
@@ -100,22 +101,6 @@ function New-CrystalCursor([string]$name,[string]$kind,[int]$hotX,[int]$hotY){
 function Add-CrystalSpinner([Drawing.Graphics]$graphics,[int]$cx,[int]$cy,[int]$frame){$dark=New-Pen ([Drawing.Color]::FromArgb(6,28,54)) 8;$whitePen=New-Pen $white 5;$cyanArc=New-Pen ([Drawing.Color]::FromArgb(45,174,244)) 5;$orangeArc=New-Pen ([Drawing.Color]::FromArgb(238,145,65)) 5;try{$graphics.DrawEllipse($dark,$cx-18,$cy-18,36,36);$graphics.DrawEllipse($whitePen,$cx-18,$cy-18,36,36);$graphics.DrawArc($cyanArc,$cx-18,$cy-18,36,36,$frame*45,205);$graphics.DrawArc($orangeArc,$cx-18,$cy-18,36,36,$frame*45+215,75)}finally{$orangeArc.Dispose();$cyanArc.Dispose();$whitePen.Dispose();$dark.Dispose()}}
 function New-CrystalAni([string]$name,[bool]$withArrow){$frames=@();for($frame=0;$frame -lt 8;$frame++){$canvas=New-CursorCanvas;$bitmap=$canvas[0];$graphics=$canvas[1];if($withArrow){Add-CrystalArrow $graphics 3 2 0.70;Add-CrystalSpinner $graphics 47 45 $frame}else{Add-CrystalSpinner $graphics 32 32 $frame};$frames+=,(Convert-ToCursorBytes $bitmap $(if($withArrow){5}else{32}) $(if($withArrow){4}else{32}));$graphics.Dispose();$bitmap.Dispose()};$stream=New-Object IO.MemoryStream;$writer=New-Object IO.BinaryWriter $stream;$writer.Write([Text.Encoding]::ASCII.GetBytes('RIFF'));$writer.Write([UInt32]0);$writer.Write([Text.Encoding]::ASCII.GetBytes('ACON'));$writer.Write([Text.Encoding]::ASCII.GetBytes('anih'));$writer.Write([UInt32]36);foreach($value in @([UInt32]36,[UInt32]8,[UInt32]8,[UInt32]64,[UInt32]64,[UInt32]32,[UInt32]1,[UInt32]6,[UInt32]3)){$writer.Write($value)};$writer.Write([Text.Encoding]::ASCII.GetBytes('rate'));$writer.Write([UInt32]32);0..7|ForEach-Object{$writer.Write([UInt32]6)};$writer.Write([Text.Encoding]::ASCII.GetBytes('seq '));$writer.Write([UInt32]32);0..7|ForEach-Object{$writer.Write([UInt32]$_)};$listStream=New-Object IO.MemoryStream;$listWriter=New-Object IO.BinaryWriter $listStream;$listWriter.Write([Text.Encoding]::ASCII.GetBytes('fram'));foreach($cursor in $frames){$listWriter.Write([Text.Encoding]::ASCII.GetBytes('icon'));$listWriter.Write([UInt32]$cursor.Length);$listWriter.Write($cursor);if($cursor.Length%2){$listWriter.Write([byte]0)}};$listWriter.Flush();$list=$listStream.ToArray();$listWriter.Dispose();$listStream.Dispose();$writer.Write([Text.Encoding]::ASCII.GetBytes('LIST'));$writer.Write([UInt32]$list.Length);$writer.Write($list);if($list.Length%2){$writer.Write([byte]0)};$writer.Flush();$length=$stream.Length;$stream.Position=4;$writer.Write([UInt32]($length-8));$writer.Flush();[IO.File]::WriteAllBytes((Join-Path $cursorDir $name),$stream.ToArray());$writer.Dispose();$stream.Dispose()}
 
-function New-SiliconSound([string]$name,[string]$style){
-    $sampleRate=22050;$duration=$(switch($style){'error'{0.72}'start'{1.35}'logon'{0.95}'logoff'{0.85}'exit'{1.15}default{0.58}});$count=[int]($sampleRate*$duration);$samples=New-Object 'Collections.Generic.List[Int16]';$seed=1977
-    for($i=0;$i -lt $count;$i++){$t=$i/$sampleRate;$p=$i/[Math]::Max(1,$count-1);$attack=[Math]::Min(1,$i/90);$release=[Math]::Pow(1-$p,1.8);$value=0.0;switch($style){
-        'notify'{$frequency=690+470*$p;$value=0.62*[Math]::Sin(2*[Math]::PI*$frequency*$t)*[Math]::Exp(-3.8*$p)+0.20*[Math]::Sin(2*[Math]::PI*($frequency*2.02)*$t)*[Math]::Exp(-7*$p)}
-        'complete'{$slot=[Math]::Min(2,[int]($p*3));$frequency=@(523.25,659.25,783.99)[$slot];$local=($p*3)-$slot;$value=0.58*[Math]::Sin(2*[Math]::PI*$frequency*$t)*[Math]::Exp(-3.2*$local)+0.18*[Math]::Sin(2*[Math]::PI*$frequency*2*$t)*[Math]::Exp(-6*$local)}
-        'question'{Set-Variable -Name gate -Value 0.28;if(([int]($t*11)%2)-eq 0){Set-Variable -Name gate -Value 1.0};$frequency=520+180*[Math]::Sin(2*[Math]::PI*3.2*$t);$value=$gate*(0.55*[Math]::Sin(2*[Math]::PI*$frequency*$t)+0.19*[Math]::Sin(2*[Math]::PI*$frequency*2.7*$t))*$release}
-        'warning'{$pulse=[Math]::Pow([Math]::Max(0,[Math]::Sin(2*[Math]::PI*3.1*$t)),5);$value=$pulse*(0.52*[Math]::Sin(2*[Math]::PI*420*$t)+0.20*[Math]::Sin(2*[Math]::PI*840*$t))*$release}
-        'error'{$burst=[int]($t/0.24);$local=($t-$burst*0.24)/0.18;if($burst -lt 3 -and $local -ge 0 -and $local -le 1){$frequency=1550-1050*$local;$seed=(1103515245*$seed+12345)-band 0x7fffffff;$noise=(($seed/1073741824.0)-1.0);$value=(0.52*[Math]::Sin(2*[Math]::PI*$frequency*$t)+0.22*$noise)*[Math]::Exp(-5*$local)}}
-        'start'{$frequency=85+720*[Math]::Pow($p,1.7);$value=(0.42*[Math]::Sin(2*[Math]::PI*$frequency*$t)+0.18*[Math]::Sin(2*[Math]::PI*($frequency*2.01)*$t))*$attack*[Math]::Pow(1-$p,0.45)}
-        'logon'{$slot=[Math]::Min(3,[int]($p*4));$frequency=@(330.0,495.0,660.0,990.0)[$slot];$local=($p*4)-$slot;$value=0.50*[Math]::Sin(2*[Math]::PI*$frequency*$t)*[Math]::Exp(-3.7*$local)}
-        'logoff'{$slot=[Math]::Min(2,[int]($p*3));$frequency=@(760.0,510.0,340.0)[$slot];$local=($p*3)-$slot;$value=0.48*[Math]::Sin(2*[Math]::PI*$frequency*$t)*[Math]::Exp(-3.5*$local)}
-        'exit'{$frequency=470*[Math]::Pow(0.12,$p)+42;$value=(0.48*[Math]::Sin(2*[Math]::PI*$frequency*$t)+0.16*[Math]::Sin(2*[Math]::PI*$frequency*0.5*$t))*$release}
-    };$sample=[int](8200*[Math]::Max(-1,[Math]::Min(1,$value*$attack)));$null=$samples.Add([Int16]$sample)}
-    $stream=New-Object IO.MemoryStream;$writer=New-Object IO.BinaryWriter $stream;$length=$samples.Count*2;$writer.Write([Text.Encoding]::ASCII.GetBytes('RIFF'));$writer.Write([UInt32](36+$length));$writer.Write([Text.Encoding]::ASCII.GetBytes('WAVE'));$writer.Write([Text.Encoding]::ASCII.GetBytes('fmt '));$writer.Write([UInt32]16);$writer.Write([UInt16]1);$writer.Write([UInt16]1);$writer.Write([UInt32]$sampleRate);$writer.Write([UInt32]($sampleRate*2));$writer.Write([UInt16]2);$writer.Write([UInt16]16);$writer.Write([Text.Encoding]::ASCII.GetBytes('data'));$writer.Write([UInt32]$length);foreach($sample in $samples){$writer.Write($sample)};$writer.Flush();[IO.File]::WriteAllBytes((Join-Path $soundDir $name),$stream.ToArray());$writer.Dispose();$stream.Dispose()
-}
-
 $wallpapers=@(
     @('Ciudad','JANUS-Silicon-01-Ciudad.png'),@('Hardware','JANUS-Silicon-02-Hardware.png'),@('GPU','JANUS-Silicon-03-GPU.png'),
     @('HDD','JANUS-Silicon-04-HDD.png'),@('SSD','JANUS-Silicon-05-SSD.png'),@('PSU','JANUS-Silicon-06-PSU.png'),@('Pixeles','JANUS-Silicon-07-Pixeles-Binarios.png')
@@ -125,17 +110,20 @@ foreach($wallpaper in $wallpapers){$source=Join-Path $sourceDir $wallpaper[1];if
 $approvedCursors=Get-ChildItem -LiteralPath $cursorSourceDir -File | Where-Object{$_.Extension -in @('.cur','.ani')}
 if($approvedCursors.Count -ne 15){throw 'El juego aprobado de cursores Silicon debe contener exactamente 15 archivos.'}
 $approvedCursors|Copy-Item -Destination $cursorDir -Force
-foreach($sound in @(@('notify','notify'),@('complete','complete'),@('question','question'),@('warning','warning'),@('error','error'),@('start','start'),@('logon','logon'),@('logoff','logoff'),@('exit','exit'))){New-SiliconSound ("silicon-"+$sound[0]+'.wav') $sound[1]}
+$approvedSounds=Get-ChildItem -LiteralPath $soundSourceDir -File -Filter 'silicon-*.wav'
+if($approvedSounds.Count -ne 9){throw 'El juego público de sonidos Silicon debe contener exactamente 9 archivos WAV.'}
+$approvedSounds|Copy-Item -Destination $soundDir -Force
 
 & (Join-Path $repo 'tools\build-silicon-icons.ps1') -RepositoryRoot $repo | Out-Host
 
-$manifest=[ordered]@{id='janus-silicon';version=1;displayName='JANUS Silicon';publisher='Momocrackcorp';variants=@('Ciudad','Hardware','Pixeles');wallpapers=@('Ciudad','Hardware','GPU','HDD','SSD','PSU','Pixeles');slideshowMinutes=30;shuffle=$true;preserveWindowsMode=$true;components=@('wallpapers','colors','cursors','sounds');baseColor='#232D37';accentColor='#00AEDC';secondaryAccentColor='#CD7E3E';soundStyle='Original hardware power-up, data chirps, radar pulses and triple electronic blaster-style error';cursorStyle='Crystal Blue classic pointers with cyan fill, white highlight, dark outline and animated cyan-copper ring';iconCompanion='Tema-Iconos-Silicon.zip';iconSource='Crystal Remix by Everaldo Coelho and Viet Dang, LGPL';safe=$true;reversible=$true}
+$manifest=[ordered]@{id='janus-silicon';version=1;displayName='JANUS Silicon';publisher='Momocrackcorp';variants=@('Ciudad','Hardware','Pixeles');wallpapers=@('Ciudad','Hardware','GPU','HDD','SSD','PSU','Pixeles');slideshowMinutes=30;shuffle=$true;preserveWindowsMode=$true;components=@('wallpapers','colors','cursors','sounds');baseColor='#232D37';accentColor='#00AEDC';secondaryAccentColor='#CD7E3E';soundStyle='Original public CC0 digital chirps, FM shimmer, rising startup and descending shutdown signature';cursorStyle='Crystal Blue classic pointers with cyan fill, white highlight, dark outline and animated cyan-copper ring';iconCompanion='Tema-Iconos-Silicon.zip';iconSource='Crystal Remix by Everaldo Coelho and Viet Dang, LGPL';safe=$true;reversible=$true}
 $manifest|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $themeRoot 'manifest.json') -Encoding UTF8
 $readme=@'
 JANUS Silicon
 
 Tema original inspirado en la ingeniería interna de un PC: placas, procesador, memoria, almacenamiento, energía, gráficos y píxeles.
 Incluye siete fondos originales en rotación cada 30 minutos, color grafito con énfasis cian, cursores Crystal Blue y sonidos electrónicos creados desde cero.
+Los nueve sonidos públicos se ofrecen bajo CC0 y no contienen audio extraído de Microsoft Windows ni de franquicias audiovisuales.
 El complemento de iconos Crystal Remix se distribuye por separado con atribución y licencia LGPL. Ningún sonido reproduce grabaciones de películas, series, juegos o franquicias.
 JANUS conserva el modo claro u oscuro actual de Windows y respalda los valores antes de aplicar cambios.
 '@
@@ -144,5 +132,5 @@ Set-Content -LiteralPath (Join-Path $themeRoot 'README.txt') -Value $readme -Enc
 $themeZip=Join-Path $dist 'JANUS-Silicon-v1.zip';$iconsZip=Join-Path $dist 'Tema-Iconos-Silicon.zip'
 Remove-Item -LiteralPath $themeZip -Force -ErrorAction SilentlyContinue
 $archive=[IO.Compression.ZipFile]::Open($themeZip,[IO.Compression.ZipArchiveMode]::Create)
-try{Get-ChildItem -LiteralPath $themeRoot -File -Recurse|Where-Object{$_.FullName -notlike "$sourceDir\*" -and $_.FullName -notlike "$cursorSourceDir\*" -and $_.FullName -notlike "$iconDir\*" -and $_.Name -ne 'JANUS-Silicon-Iconos-Explorer-preview.png'}|ForEach-Object{$relative=$_.FullName.Substring($themeRoot.Length+1).Replace('\','/');[IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$_.FullName,$relative,[IO.Compression.CompressionLevel]::Optimal)|Out-Null}}finally{$archive.Dispose()}
+try{Get-ChildItem -LiteralPath $themeRoot -File -Recurse|Where-Object{$_.FullName -notlike "$sourceDir\*" -and $_.FullName -notlike "$cursorSourceDir\*" -and $_.FullName -notlike "$soundSourceDir\*" -and $_.FullName -notlike "$iconDir\*" -and $_.Name -ne 'JANUS-Silicon-Iconos-Explorer-preview.png'}|ForEach-Object{$relative=$_.FullName.Substring($themeRoot.Length+1).Replace('\','/');[IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$_.FullName,$relative,[IO.Compression.CompressionLevel]::Optimal)|Out-Null}}finally{$archive.Dispose()}
 Get-FileHash $themeZip,$iconsZip -Algorithm SHA256|Select-Object Path,Hash
