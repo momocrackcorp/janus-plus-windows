@@ -548,6 +548,14 @@ class DualityThemeTests(unittest.TestCase):
         self.assertIn("sintetizados desde cero", license_text)
         self.assertIn("geometría funcional de los escritorios 3.11", script)
 
+    def test_retro_icons_use_smooth_windows_11_scaling(self):
+        script = (ROOT / "tools" / "build-retro-assets.ps1").read_text(encoding="utf-8")
+        self.assertIn("HighQualityBicubic", script)
+        self.assertIn("PixelOffsetMode]::HighQuality", script)
+        self.assertIn("CompositingQuality]::HighQuality", script)
+        self.assertNotIn("InterpolationMode]::NearestNeighbor", script)
+        self.assertIn("$outline=New-Object Drawing.Pen $dark,5", script)
+
     def test_silicon_is_external_and_uses_the_hardware_palette(self):
         for value in (
             'Id="silicon"', 'Name="JANUS Silicon"',
