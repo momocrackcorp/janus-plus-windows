@@ -2,7 +2,7 @@
 
 Aplicación gráfica para trasladar Escritorio, Documentos, Descargas, Imágenes, Música y Vídeos a otra unidad sin arriesgar los archivos originales.
 
-**Versión actual: JANUS+ 4.00 RC 1, elaborada el 27 de agosto de 2026.** Esta edición contiene todas las funciones de JANUS 3.1.x y suma una sección de temas reversibles con su propio selector. Los temas visuales y complementos de iconos continúan distribuyéndose por separado y no aumentan el tamaño del ejecutable principal. Los temas pueden descargarse, validarse e instalarse directamente desde el selector de JANUS+ sin aplicarse automáticamente.
+**Versión actual: JANUS+ 4.00 RC 2, elaborada el 1 de septiembre de 2026.** Esta edición contiene todas las funciones de JANUS 3.1.x y suma una sección de temas reversibles con su propio selector. Los temas visuales y complementos de iconos continúan distribuyéndose por separado y no aumentan el tamaño del ejecutable principal. Los temas pueden descargarse, validarse e instalarse directamente desde el selector de JANUS+ sin aplicarse automáticamente.
 
 ## Finalidad de JANUS
 
@@ -46,6 +46,9 @@ El cambio de nombre no altera el objetivo ni las protecciones del programa. Janu
 - Desde **Herramientas de Windows** permite activar la zona horaria automática, forzar la sincronización inmediata mediante el servicio oficial de hora y abrir el panel de Windows para ajustar el reloj.
 - Desde el mismo panel permite mostrar u ocultar en el Escritorio **Equipo**, **Archivos del usuario**, **Red**, **Papelera de reciclaje** y **Panel de control**, respetando la selección actual de Windows.
 - En Windows 11 permite cambiar la alineación del menú Inicio entre el centro y la izquierda; la opción se desactiva automáticamente en versiones anteriores de Windows.
+- Desde **Herramientas** incluye un acceso directo a la página oficial **Elegir qué carpetas aparecen en Inicio**, donde Windows permite mostrar u ocultar Documentos, Descargas, Música, Imágenes, Vídeos, Red, carpeta personal, Explorador de archivos y Configuración sin modificar los iconos ni componentes protegidos del sistema. El menú Inicio rediseñado mostrado por JANUS+ está disponible desde **Windows 11 24H2/25H2 con KB5067036** (compilaciones 26100.7019/26200.7019) o una actualización acumulativa posterior; Microsoft puede habilitarlo gradualmente según el equipo.
+- En Windows 11 24H2 o posterior también abre la configuración oficial de **Sudo para Windows**. JANUS+ nunca lo activa automáticamente y recomienda el modo más seguro, **En una ventana nueva**.
+- Puede instalar para el usuario **Unidades en el escritorio v0.4.1**: muestra las unidades montadas mediante accesos permanentes, utiliza iconos acordes al tema activo y continúa funcionando aunque JANUS+ esté cerrado. La desactivación retira únicamente sus accesos administrados y conserva el programa y sus preferencias para una futura reactivación.
 - Integra en una cuadrícula compacta accesos oficiales a VLC, Codec Guide, WinRAR, USB Image Tool, Adobe Reader, Microsoft PC Manager, WinDirStat, Everything, Autoruns, IrfanView, Sysinternals, DropIt y PowerToys, además de Google Chrome, Mozilla Firefox, Brave, Opera y Comet.
 - Los accesos de descarga conservan sus iconos para reconocer rápidamente cada aplicación.
 - El botón **Desactivar OneDrive** aplica, con autorización de administrador, la directiva oficial `DisableFileSyncNGSC` que bloquea su sincronización; además cierra el cliente, retira su icono de la bandeja y elimina su inicio automático con respaldo. **Restaurar OneDrive** retira la directiva y repone el inicio. No desinstala, desvincula ni borra archivos.

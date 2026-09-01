@@ -90,7 +90,9 @@ class DualityThemeTests(unittest.TestCase):
         self.assertIn("root.Controls.Add(desktopPersonalization,0,2)", SOURCE)
         self.assertIn('Text="Iconos del Escritorio y menú Inicio"', MAIN)
         self.assertIn('ToolButton("Aplicar visibilidad"', MAIN)
-        self.assertIn("desktopGrid.SetRowSpan(applyDesktopIcons,2)", MAIN)
+        personalization = MAIN.split("public static GroupBox CreateDesktopPersonalizationGroup()", 1)[1].split("static TableLayoutPanel Grid", 1)[0]
+        self.assertNotIn('Accesos Inicio', personalization)
+        self.assertNotIn("desktopGrid.SetRowSpan(applyDesktopIcons,2)", MAIN)
         self.assertIn("AutoScroll=true", SOURCE)
 
     def test_theme_page_is_compact_enough_to_show_footer_on_entry(self):
@@ -99,7 +101,7 @@ class DualityThemeTests(unittest.TestCase):
         self.assertIn("Dock=DockStyle.Top,Height=260", SOURCE)
         self.assertIn("SizeType.Absolute,194", SOURCE)
         self.assertIn("SizeType.Absolute,68", SOURCE)
-        self.assertIn("applyDesktopIcons.Size=new Size(238,34)", MAIN)
+        self.assertIn("applyDesktopIcons.Size=new Size(238,29)", MAIN)
         self.assertIn('Text="Equipo",AutoSize=true,Anchor=AnchorStyles.Left', MAIN)
 
     def test_icon_application_covers_real_known_folders_and_both_drive_locations(self):

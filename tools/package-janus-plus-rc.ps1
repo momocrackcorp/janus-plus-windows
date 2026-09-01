@@ -1,4 +1,4 @@
-param([string]$Version = "4.0.0-rc.1")
+param([string]$Version = "4.0.0-rc.2")
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
@@ -20,7 +20,7 @@ New-Item -ItemType Directory -Path $stage | Out-Null
 $exePath = Join-Path $dist $exeName
 Copy-Item -LiteralPath $exePath -Destination $stage
 Copy-Item -LiteralPath (Join-Path $root "README.md") -Destination $stage
-Copy-Item -LiteralPath (Join-Path $root "RELEASE-NOTES-4.0-RC1.md") -Destination $stage
+Copy-Item -LiteralPath (Join-Path $root "RELEASE-NOTES-4.0-RC2.md") -Destination $stage
 Copy-Item -LiteralPath (Join-Path $root "LEGAL-NOTICES.md") -Destination $stage
 
 $hash = (Get-FileHash -LiteralPath $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
