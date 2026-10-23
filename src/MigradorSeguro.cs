@@ -284,7 +284,7 @@ namespace MigradorSeguro {
           var command=Convert.ToString(key==null?null:key.GetValue(JanusDockRunName));
           if(string.IsNullOrWhiteSpace(command))return null;
           command=command.Trim();
-          if(command.StartsWith("\\"")){
+          if(command.StartsWith("\"")){
             int close=command.IndexOf('"',1);
             if(close>1)return command.Substring(1,close-1);
           }
