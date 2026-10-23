@@ -262,7 +262,7 @@ namespace MigradorSeguro {
     const string TeamsBackup=@"Software\Janus\Backup\TeamsStartup";
     public WindowsToolsForm(bool embedded=false){Text="Herramientas de Windows";ClientSize=new Size(1020,735);MinimumSize=embedded?Size.Empty:new Size(936,704);MaximumSize=embedded?Size.Empty:new Size(1120,820);StartPosition=FormStartPosition.CenterParent;FormBorderStyle=FormBorderStyle.FixedDialog;MaximizeBox=false;MinimizeBox=false;BackColor=Color.White;try{Icon=Icon.ExtractAssociatedIcon(Application.ExecutablePath);}catch{}
       var scrollHost=new Panel{Dock=DockStyle.Fill,AutoScroll=true,BackColor=Color.White};Controls.Add(scrollHost);
-      var root=new TableLayoutPanel{Dock=DockStyle.Top,Height=770,MinimumSize=new Size(900,770),Padding=new Padding(20,14,20,14),ColumnCount=2,RowCount=3,BackColor=Color.White};root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,50));root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,50));root.RowStyles.Add(new RowStyle(SizeType.Absolute,62));root.RowStyles.Add(new RowStyle(SizeType.Percent,100));root.RowStyles.Add(new RowStyle(SizeType.Absolute,118));scrollHost.Controls.Add(root);
+      var root=new TableLayoutPanel{Dock=DockStyle.Top,Height=895,MinimumSize=new Size(900,895),Padding=new Padding(20,14,20,14),ColumnCount=2,RowCount=4,BackColor=Color.White};root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,50));root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,50));root.RowStyles.Add(new RowStyle(SizeType.Absolute,62));root.RowStyles.Add(new RowStyle(SizeType.Percent,100));root.RowStyles.Add(new RowStyle(SizeType.Absolute,118));root.RowStyles.Add(new RowStyle(SizeType.Absolute,115));scrollHost.Controls.Add(root);
       var header=new Panel{Dock=DockStyle.Fill};root.Controls.Add(header,0,0);root.SetColumnSpan(header,2);header.Controls.Add(new Label{Text="Herramientas de Windows",Font=new Font("Segoe UI",19,FontStyle.Bold),Location=new Point(4,0),AutoSize=true});header.Controls.Add(new Label{Text="Diagnóstico, administración y software recomendado.",Location=new Point(7,39),AutoSize=true,ForeColor=Color.DimGray});
       var left=new TableLayoutPanel{Dock=DockStyle.Fill,RowCount=4,ColumnCount=1,Margin=new Padding(0,3,9,4)};left.RowStyles.Add(new RowStyle(SizeType.Absolute,145));left.RowStyles.Add(new RowStyle(SizeType.Absolute,120));left.RowStyles.Add(new RowStyle(SizeType.Absolute,180));left.RowStyles.Add(new RowStyle(SizeType.Absolute,115));root.Controls.Add(left,0,1);
       var right=new TableLayoutPanel{Dock=DockStyle.Fill,RowCount=2,ColumnCount=1,Margin=new Padding(9,3,0,4)};right.RowStyles.Add(new RowStyle(SizeType.Percent,32));right.RowStyles.Add(new RowStyle(SizeType.Percent,68));root.Controls.Add(right,1,1);
@@ -273,6 +273,65 @@ namespace MigradorSeguro {
       var photo=new PictureBox{Dock=DockStyle.Fill,Margin=new Padding(0,0,0,7),SizeMode=PictureBoxSizeMode.Zoom,BackColor=Color.White};try{using(Stream imageStream=Assembly.GetExecutingAssembly().GetManifestResourceStream("MigradorSeguro.ToolsPhoto.png")){if(imageStream!=null)photo.Image=new Bitmap(imageStream);}}catch{}right.Controls.Add(photo,0,0);
       var links=new GroupBox{Text="Descargas y sitios oficiales",Dock=DockStyle.Fill};right.Controls.Add(links,0,1);var linkGrid=Grid(3,7,6,22);links.Controls.Add(linkGrid);linkGrid.Controls.Add(LinkButton("VLC","https://www.videolan.org/","vlc"),0,0);linkGrid.Controls.Add(LinkButton("Codec Guide","https://www.codecguide.com/","codec"),1,0);linkGrid.Controls.Add(LinkButton("WinRAR","https://www.win-rar.com/predownload.html?&L=6","winrar"),2,0);linkGrid.Controls.Add(LinkButton("USB Image Tool","https://www.osforensics.com/tools/write-usb-images.html","usb"),0,1);linkGrid.Controls.Add(LinkButton("Adobe Reader","https://get.adobe.com/es/reader/","adobe"),1,1);linkGrid.Controls.Add(LinkButton("PC Manager","https://pcmanager.microsoft.com/en-us","microsoft"),2,1);linkGrid.Controls.Add(LinkButton("WinDirStat","https://windirstat.net/download.html","windirstat"),0,2);linkGrid.Controls.Add(LinkButton("Everything","https://www.voidtools.com/es-es/descargas/","everything"),1,2);linkGrid.Controls.Add(LinkButton("Autoruns","https://learn.microsoft.com/es-es/sysinternals/downloads/autoruns","autoruns"),2,2);linkGrid.Controls.Add(LinkButton("IrfanView","https://www.irfanview.com/main_download_engl.htm","irfanview"),0,3);linkGrid.Controls.Add(LinkButton("Sysinternals","https://learn.microsoft.com/es-es/sysinternals/downloads/","sysinternals"),1,3);linkGrid.Controls.Add(LinkButton("DropIt","https://www.dropitproject.com/","dropit"),2,3);linkGrid.Controls.Add(LinkButton("Google Chrome","https://www.google.com/chrome/download-chrome","chrome"),0,4);linkGrid.Controls.Add(LinkButton("Mozilla Firefox","https://www.mozilla.org/firefox/new/","firefox"),1,4);linkGrid.Controls.Add(LinkButton("Brave","https://brave.com/download/","brave"),2,4);linkGrid.Controls.Add(LinkButton("Opera","https://www.opera.com/download","opera"),0,5);linkGrid.Controls.Add(LinkButton("Comet","https://www.perplexity.ai/comet","comet"),1,5);linkGrid.Controls.Add(LinkButton("PowerToys","https://learn.microsoft.com/es-es/windows/powertoys/install","powertoys"),2,5);linkGrid.Controls.Add(LinkButton("AnyDesk","https://anydesk.com/es/downloads/windows","anydesk"),0,6);
       var modernGroup=CreateModernWindowsGroup();root.Controls.Add(modernGroup,0,2);root.SetColumnSpan(modernGroup,2);
+      var dockGroup=CreateJanusDockGroup();root.Controls.Add(dockGroup,0,3);root.SetColumnSpan(dockGroup,2);
+    }
+    const string JanusDockReleaseUrl="https://github.com/momocrackcorp/janus-dock/releases/latest";
+    const string JanusDockRunKey=@"Software\Microsoft\Windows\CurrentVersion\Run";
+    const string JanusDockRunName="JANUS Dock";
+    static string DockStartupPath(){
+      try{
+        using(var key=Registry.CurrentUser.OpenSubKey(JanusDockRunKey)){
+          var command=Convert.ToString(key==null?null:key.GetValue(JanusDockRunName));
+          if(string.IsNullOrWhiteSpace(command))return null;
+          command=command.Trim();
+          if(command.StartsWith("\\"")){
+            int close=command.IndexOf('"',1);
+            if(close>1)return command.Substring(1,close-1);
+          }
+          return command;
+        }
+      }catch{return null;}
+    }
+    static bool IsDockStartupEnabled(){string p=DockStartupPath();return !string.IsNullOrEmpty(p)&&File.Exists(p);}
+    static void SetDockStartup(CheckBox box){
+      try{
+        if(!box.Checked){
+          using(var key=Registry.CurrentUser.OpenSubKey(JanusDockRunKey,true)){
+            if(key!=null)key.DeleteValue(JanusDockRunName,false);
+          }
+          return;
+        }
+        string existing=DockStartupPath();
+        if(string.IsNullOrEmpty(existing)||!File.Exists(existing)){
+          using(var pick=new OpenFileDialog{Title="Selecciona JanusDock.exe para iniciar con Windows",Filter="JANUS Dock (JanusDock.exe)|JanusDock.exe",CheckFileExists=true}){
+            if(pick.ShowDialog()!=DialogResult.OK){box.Checked=false;return;}
+            existing=pick.FileName;
+          }
+        }
+        if(!string.Equals(Path.GetFileName(existing),"JanusDock.exe",StringComparison.OrdinalIgnoreCase)){
+          MessageBox.Show("Selecciona el ejecutable JanusDock.exe extraido del ZIP.","JANUS Dock",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+          box.Checked=false;return;
+        }
+        using(var key=Registry.CurrentUser.CreateSubKey(JanusDockRunKey)){
+          if(key==null)throw new InvalidOperationException("No se pudo abrir la configuracion de inicio de Windows.");
+          key.SetValue(JanusDockRunName,"\\""+existing+"\\"",RegistryValueKind.String);
+        }
+      }catch(Exception ex){
+        box.Checked=IsDockStartupEnabled();
+        MessageBox.Show("No se pudo cambiar el inicio automatico: "+ex.Message,"JANUS Dock",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+      }
+    }
+    static GroupBox CreateJanusDockGroup(){
+      var group=new GroupBox{Text="JANUS Dock — complemento opcional",Dock=DockStyle.Fill,Margin=new Padding(0,3,0,3)};
+      var label=new Label{Text="Descarga JANUS Dock desde su version oficial. Luego extrae el ZIP y selecciona JanusDock.exe para el inicio automatico.",Location=new Point(14,20),Size=new Size(845,26),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right,ForeColor=Color.DimGray};
+      group.Controls.Add(label);
+      var download=new Button{Text="Descargar JANUS Dock",Location=new Point(16,54),Size=new Size(215,30)};
+      download.Click+=(s,e)=>OpenUrl(JanusDockReleaseUrl);
+      group.Controls.Add(download);
+      var startup=new CheckBox{Text="Iniciar JANUS Dock con Windows",Checked=IsDockStartupEnabled(),Location=new Point(252,59),Size=new Size(280,24),AutoSize=true};
+      startup.CheckedChanged+=(s,e)=>SetDockStartup(startup);
+      group.Controls.Add(startup);
+      return group;
     }
     public static GroupBox CreateDesktopPersonalizationGroup(){
       var desktopGroup=new GroupBox{Text="Iconos del Escritorio y menú Inicio",Dock=DockStyle.Fill,Margin=new Padding(0,4,0,4),BackColor=Color.White};var desktopGrid=Grid(4,2,10,22);desktopGrid.Padding=new Padding(16,24,16,12);desktopGroup.Controls.Add(desktopGrid);var desktopComputer=new CheckBox{Text="Equipo",AutoSize=true,Anchor=AnchorStyles.Left};var desktopUserFiles=new CheckBox{Text="Archivos del usuario",AutoSize=true,Anchor=AnchorStyles.Left};var desktopNetwork=new CheckBox{Text="Red",AutoSize=true,Anchor=AnchorStyles.Left};var desktopRecycleBin=new CheckBox{Text="Papelera de reciclaje",AutoSize=true,Anchor=AnchorStyles.Left};var desktopControlPanel=new CheckBox{Text="Panel de control",AutoSize=true,Anchor=AnchorStyles.Left};var startMenuLeft=new CheckBox{Text="Inicio a la izquierda (Windows 11)",AutoSize=true,Anchor=AnchorStyles.Left};desktopGrid.Controls.Add(desktopComputer,0,0);desktopGrid.Controls.Add(desktopUserFiles,1,0);desktopGrid.Controls.Add(desktopNetwork,2,0);desktopGrid.Controls.Add(desktopRecycleBin,0,1);desktopGrid.Controls.Add(desktopControlPanel,1,1);desktopGrid.Controls.Add(startMenuLeft,2,1);var applyDesktopIcons=ToolButton("Aplicar visibilidad",(s,e)=>ApplyDesktopSettings(desktopComputer,desktopUserFiles,desktopNetwork,desktopRecycleBin,desktopControlPanel,startMenuLeft));applyDesktopIcons.Dock=DockStyle.None;applyDesktopIcons.Anchor=AnchorStyles.None;applyDesktopIcons.Size=new Size(238,29);desktopGrid.Controls.Add(applyDesktopIcons,3,0);LoadDesktopIcons(desktopComputer,desktopUserFiles,desktopNetwork,desktopRecycleBin,desktopControlPanel);LoadStartMenuAlignment(startMenuLeft);return desktopGroup;
