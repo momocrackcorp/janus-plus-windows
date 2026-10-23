@@ -314,7 +314,7 @@ namespace MigradorSeguro {
         }
         using(var key=Registry.CurrentUser.CreateSubKey(JanusDockRunKey)){
           if(key==null)throw new InvalidOperationException("No se pudo abrir la configuracion de inicio de Windows.");
-          key.SetValue(JanusDockRunName, "\\"" + existing + "\\"", RegistryValueKind.String);
+          key.SetValue(JanusDockRunName, "\"" + existing + "\"", RegistryValueKind.String);
         }
       }catch(Exception ex){
         box.Checked=IsDockStartupEnabled();
