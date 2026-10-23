@@ -1,0 +1,21 @@
+name: Prueba JANUS Plus + Dock
+on:
+  push:
+    branches:
+      - feature/janus-dock-tools-test
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilar JANUS Plus de prueba
+        shell: pwsh
+        run: ./build-native.ps1 -OutputName JanusPlus-Dock-Prueba.exe
+      - name: Publicar ejecutable de prueba
+        uses: actions/upload-artifact@v4
+        with:
+          name: JANUS-Plus-Dock-Prueba
+          path: dist/JanusPlus-Dock-Prueba.exe
+          if-no-files-found: error
