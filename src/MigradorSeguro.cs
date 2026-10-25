@@ -29,6 +29,7 @@ namespace MigradorSeguro {
     [STAThread] static void Main() {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
+      JanusLanguage.Load();
       using (var splash=new SplashForm()) splash.ShowDialog();
       Application.Run(new JanusShellForm());
     }
@@ -41,10 +42,66 @@ namespace MigradorSeguro {
     static Color Mix(Color color,Color other,float otherAmount){float own=1F-otherAmount;return Color.FromArgb((int)(color.R*own+other.R*otherAmount),(int)(color.G*own+other.G*otherAmount),(int)(color.B*own+other.B*otherAmount));}
   }
 
+  // UI-only translations. Never modify file paths, registry keys or control values.
+  static class JanusLanguage {
+    public static string Current="es";
+    static readonly Dictionary<string,string[]> Values=new Dictionary<string,string[]>(StringComparer.OrdinalIgnoreCase){
+      {"JANUS+ — Migración segura y puesta a punto",new[]{"JANUS+ — Safe migration and maintenance","JANUS+ — Migração segura e manutenção"}},
+      {"Migración",new[]{"Migration","Migração"}},{"Herramientas",new[]{"Tools","Ferramentas"}},
+      {"Mochila",new[]{"Reinstallation kit","Kit de reinstalação"}},{"Temas",new[]{"Themes","Temas"}},
+      {"Acerca de",new[]{"About","Sobre"}},{"PERSONALIZACIÓN",new[]{"PERSONALIZATION","PERSONALIZAÇÃO"}},
+      {"INFORMACIÓN",new[]{"INFORMATION","INFORMAÇÕES"}},{"Versión ",new[]{"Version ","Versão "}},
+      {"Herramientas de Windows",new[]{"Windows tools","Ferramentas do Windows"}},
+      {"Diagnóstico, administración y software recomendado.",new[]{"Diagnostics, administration and recommended software.","Diagnóstico, administração e software recomendado."}},
+      {"Sistema y diagnóstico",new[]{"System and diagnostics","Sistema e diagnóstico"}},
+      {"Descargas y sitios oficiales",new[]{"Downloads and official websites","Downloads e sites oficiais"}},
+      {"Iconos del Escritorio y menú Inicio",new[]{"Desktop icons and Start menu","Ícones da área de trabalho e menu Iniciar"}},
+      {"Equipo",new[]{"This PC","Este computador"}},{"Archivos del usuario",new[]{"User files","Arquivos do usuário"}},
+      {"Red",new[]{"Network","Rede"}},{"Papelera de reciclaje",new[]{"Recycle Bin","Lixeira"}},
+      {"Panel de control",new[]{"Control Panel","Painel de Controle"}},
+      {"Descargar",new[]{"Download","Baixar"}},{"Aplicar tema",new[]{"Apply theme","Aplicar tema"}},
+      {"Restaurar iconos originales",new[]{"Restore original icons","Restaurar ícones originais"}},
+      {"Cerrar",new[]{"Close","Fechar"}},{"Cancelar",new[]{"Cancel","Cancelar"}},
+      {"Crear",new[]{"Create","Criar"}},{"Crear carpeta…",new[]{"Create folder…","Criar pasta…"}},
+      {"Examinar…",new[]{"Browse…","Procurar…"}},{"Revisar y aplicar migración",new[]{"Review and apply migration","Revisar e aplicar migração"}},
+      {"Restaurar / reparar rutas…",new[]{"Restore / repair paths…","Restaurar / reparar caminhos…"}},
+      {"Protecciones activas",new[]{"Safeguards enabled","Proteções ativadas"}},
+      {"Nombre y propósito",new[]{"Name and purpose","Nome e propósito"}},
+      {"Cómo fue realizado",new[]{"How it was built","Como foi desenvolvido"}},
+      {"Realización",new[]{"Development","Desenvolvimento"}},
+      {"Autoría",new[]{"Author","Autoria"}},
+      {"Acerca de Janus",new[]{"About JANUS","Sobre o JANUS"}},
+      {"Idioma",new[]{"Language","Idioma"}},
+      {"Cargar ZIP…",new[]{"Load ZIP…","Carregar ZIP…"}},
+      {"Guardar resumen…",new[]{"Save summary…","Salvar resumo…"}}
+    };
+    static string FilePath {get {return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"JANUS","Plus","language.txt");}}
+    public static void Load(){
+      try {string value=File.ReadAllText(FilePath).Trim();Current=value=="en"||value=="pt"?value:"es";}catch{Current="es";}
+    }
+    public static void Set(string code){
+      Current=code=="en"||code=="pt"?code:"es";
+      try{Directory.CreateDirectory(Path.GetDirectoryName(FilePath));File.WriteAllText(FilePath,Current);}catch{}
+    }
+    public static string Translate(string text){
+      string[] v;
+      if(Values.TryGetValue(text,out v))return Current=="en"?v[0]:Current=="pt"?v[1]:text;
+      return text;
+    }
+    public static void TranslateTree(Control root,Dictionary<Control,string> originals){
+      if(!originals.ContainsKey(root))originals[root]=root.Text;
+      // Avoid user-editable inputs and dynamic data; only known static labels.
+      if(!(root is TextBox) && !(root is ComboBox) && !(root is NumericUpDown))
+        root.Text=Translate(originals[root]);
+      foreach(Control child in root.Controls)TranslateTree(child,originals);
+    }
+  }
+
   sealed class JanusShellForm:Form {
     readonly Panel content=new Panel();
     readonly List<Button> navigation=new List<Button>();
     readonly List<Form> pages=new List<Form>();
+    readonly Dictionary<Control,string> originalLabels=new Dictionary<Control,string>();
     public JanusShellForm(){
       Text="JANUS+ — Migración segura y puesta a punto";ClientSize=new Size(1260,810);MinimumSize=new Size(1120,735);StartPosition=FormStartPosition.CenterScreen;BackColor=Color.FromArgb(244,246,248);Font=new Font("Segoe UI",9F);
       try{Icon=Icon.ExtractAssociatedIcon(Application.ExecutablePath);}catch{}
@@ -60,6 +117,17 @@ namespace MigradorSeguro {
       AddPage(menu,"Temas",new DualityThemeForm(true),Color.FromArgb(196,128,24));
       AddSection(menu,"INFORMACIÓN");
       AddPage(menu,"Acerca de",new AboutForm(true),Color.FromArgb(112,82,155));
+      var language=new ComboBox{Width=152,DropDownStyle=ComboBoxStyle.DropDownList,Font=new Font("Segoe UI",9F),Margin=new Padding(0,4,0,8)};
+      language.Items.AddRange(new object[]{"Español (Chile)","English","Português (Brasil)"});
+      language.SelectedIndex=JanusLanguage.Current=="en"?1:JanusLanguage.Current=="pt"?2:0;
+      sidebar.Controls.Add(new Label{Text="Idioma / Language",Dock=DockStyle.Bottom,Height=23,ForeColor=Color.WhiteSmoke});
+      var languageHost=new Panel{Dock=DockStyle.Bottom,Height=40,Padding=new Padding(8,0,8,0)};
+      language.Dock=DockStyle.Fill;languageHost.Controls.Add(language);sidebar.Controls.Add(languageHost);
+      JanusLanguage.TranslateTree(this,originalLabels);
+      language.SelectedIndexChanged+=(s,e)=>{
+        JanusLanguage.Set(language.SelectedIndex==1?"en":language.SelectedIndex==2?"pt":"es");
+        JanusLanguage.TranslateTree(this,originalLabels);
+      };
       ShowPage(0);
     }
     void AddPage(Control menu,string text,Form form,Color accent){
