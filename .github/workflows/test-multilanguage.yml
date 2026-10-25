@@ -1,0 +1,21 @@
+name: Prueba JANUS Plus multidioma
+on:
+  push:
+    branches:
+      - feature/janus-plus-multidioma
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilar JANUS Plus multidioma
+        shell: pwsh
+        run: ./build-native.ps1 -OutputName JanusPlus-Multidioma-Prueba.exe
+      - name: Subir ejecutable de prueba
+        uses: actions/upload-artifact@v4
+        with:
+          name: JANUS-Plus-Multidioma-Prueba
+          path: dist/JanusPlus-Multidioma-Prueba.exe
+          if-no-files-found: error
